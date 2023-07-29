@@ -6,6 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <UserSecretsId>9e7d914b-a60c-4280-ba8b-5791c77e4237</UserSecretsId>
+        <RootNamespace>boards</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
