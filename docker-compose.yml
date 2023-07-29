@@ -1,0 +1,8 @@
+﻿services:
+  boards:
+    image: boards
+    build:
+      context: .
+      dockerfile: boards/Dockerfile
+    ports:
+      - 8080:80
