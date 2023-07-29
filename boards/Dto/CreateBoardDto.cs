@@ -1,6 +1,6 @@
 namespace boards.Dto;
 
-public class BoardDto
+public class CreateBoardDto
 {
     public string Slug { get; set; }
     public string Name { get; set; }

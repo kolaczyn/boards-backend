@@ -1,6 +1,7 @@
 using boards.Application;
 using boards.Domain;
 using boards.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,12 @@ builder.Services.AddTransient<GetAllBoardsUseCase>();
 builder.Services.AddTransient<IBoardsRepository, BoardsRepository>();
 builder.Services.AddTransient<GetBoardBySlugUseCase>();
 builder.Services.AddTransient<GetAllBoardsUseCase>();
+builder.Services.AddTransient<CreateBoardUseCase>();
+
+builder.Services.AddDbContext<BoardDbContext>(options =>
+{
+    options.UseSqlite("Data Source=boards.db");
+});
 
 var app = builder.Build();
 

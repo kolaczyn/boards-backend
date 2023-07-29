@@ -4,26 +4,31 @@ namespace boards.Infrastructure;
 
 public class BoardsRepository : IBoardsRepository
 {
-    private IEnumerable<BoardDb> Db()
+    private readonly BoardDbContext _dbContext;
+
+    public BoardsRepository(BoardDbContext dbContext)
     {
-        var db = new List<BoardDb>
-        {
-            new() { Slug = "a", Name = "anime" },
-            new() { Slug = "b", Name = "random" }
-        };
-        return db;
+        _dbContext = dbContext;
     }
+
     public IEnumerable<BoardDomain> GetAll()
     {
-        var db = Db();
+        var db = _dbContext.Set<BoardDb>();
         var domain = db.Select(x => x.ToDomain());
         return domain;
     }
 
     public BoardDomain? GetBySlug(string slug)
     {
-        var db = Db();
-        var domain = db.FirstOrDefault(x => x.Slug == slug)?.ToDomain();
-        return domain;
+
+        return _dbContext.Boards.Find(slug)?.ToDomain();
+    }
+
+    public BoardDomain Create(BoardDomain board)
+    {
+        _dbContext.Add(board.ToDb());
+        _dbContext.SaveChanges();
+
+        return board;
     }
 }

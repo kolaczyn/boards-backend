@@ -2,6 +2,6 @@ namespace boards;
 
 public class BoardDomain
 {
-    public String Slug { get; set; }
-    public String Name { get; set; }
+    public string Slug { get; set; }
+    public string Name { get; set; }
 }

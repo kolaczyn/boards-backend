@@ -13,15 +13,23 @@ public class BoardsController : ControllerBase
     {
         return useCase.Execute();
     }
-    
-    [HttpGet("{id}")]
-    public IActionResult Get( [FromRoute] String id,[FromServices] GetBoardBySlugUseCase useCase)
+
+    [HttpGet("{slug}")]
+    public IActionResult Get([FromRoute] String slug, [FromServices] GetBoardBySlugUseCase useCase)
     {
-        var result = useCase.Execute(id);
+        var result = useCase.Execute(slug);
         if (result is null)
         {
             return NotFound();
         }
+
         return Ok(result);
+    }
+    
+    [HttpPost]
+    public BoardDto Post([FromBody] BoardDto dto, [FromServices] CreateBoardUseCase useCase)
+    {
+        var result = useCase.Execute(dto);
+        return result;
     }
 }

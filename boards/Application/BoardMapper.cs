@@ -13,4 +13,12 @@ public static class BoardMapper
         };
     }
     
+    public static BoardDomain ToDomain(this BoardDto board)
+    {
+        return new BoardDomain
+        {
+            Slug = board.Slug,
+            Name = board.Name
+        };
+    }
 }
