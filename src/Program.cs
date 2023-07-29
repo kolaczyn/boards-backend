@@ -17,6 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddTransient<GetAllBoardsUseCase>();
     builder.Services.AddTransient<CreateBoardUseCase>();
     builder.Services.AddTransient<GetThreadsListUseCase>();
+    builder.Services.AddTransient<CreateThreadUseCase>();
 }
 
 builder.Services.AddDbContext<BoardDbContext>(options => { options.UseSqlite("Data Source=boards.db"); });

@@ -40,4 +40,10 @@ public class BoardsController : ControllerBase
     {
         return useCase.Execute(slug);
     }
+    
+    [HttpPost("{slug}/threads")]
+    public ThreadDto? PostThread([FromRoute] string slug, [FromBody] CreateThreadDto dto, [FromServices] CreateThreadUseCase useCase)
+    {
+        return useCase.Execute(slug, dto.Reply.Message);
+    }
 }
