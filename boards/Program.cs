@@ -13,6 +13,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<GetAllBoardsUseCase>();
 builder.Services.AddTransient<IBoardsRepository, BoardsRepository>();
+builder.Services.AddTransient<GetBoardBySlugUseCase>();
+builder.Services.AddTransient<GetAllBoardsUseCase>();
 
 var app = builder.Build();
 
