@@ -1,11 +1,10 @@
 using boards.Dto;
-using boards.Infrastructure;
 
-namespace boards.Mappers;
+namespace boards.Application;
 
-public static class BoardsMapper
+public static class BoardMapper
 {
-    public static BoardDto ToDto(this BoardDb board)
+    public static BoardDto ToDto(this BoardDomain board)
     {
         return new BoardDto
         {
@@ -13,4 +12,5 @@ public static class BoardsMapper
             Name = board.Name
         };
     }
+    
 }

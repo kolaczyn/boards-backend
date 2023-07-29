@@ -1,17 +1,18 @@
-using boards.Dto;
+using boards.Domain;
 
 namespace boards.Infrastructure;
 
-public class BoardsRepository
+public class BoardsRepository : IBoardsRepository
 {
-    public IEnumerable<BoardDb> GetAll()
+    public IEnumerable<BoardDomain> GetAll()
     {
-        var boards = new List<BoardDb>
+        var db = new List<BoardDb>
         {
             new() { Slug = "a", Name = "anime" },
             new() { Slug = "b", Name = "random" }
         };
 
-        return boards;
+        var domain = db.Select(x => x.ToDomain());
+        return domain;
     }
 }

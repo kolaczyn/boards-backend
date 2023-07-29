@@ -1,5 +1,5 @@
+using boards.Application;
 using boards.Dto;
-using boards.UseCases;
 using Microsoft.AspNetCore.Mvc;
 
 namespace boards.Controllers;
@@ -9,9 +9,8 @@ namespace boards.Controllers;
 public class BoardsController : ControllerBase
 {
     [HttpGet]
-    public IEnumerable<BoardDto> Get()
+    public IEnumerable<BoardDto> Get(GetAllBoardsUseCase useCase)
     {
-        var useCase = new GetAllBoardsUseCase();
         return useCase.Execute();
     }
 }
