@@ -1,4 +1,7 @@
-namespace boards.Infrastructure;
+using boards.Domain;
+using boards.Infrastructure.Models;
+
+namespace boards.Infrastructure.Mappers;
 
 public static class BoardMapper
 {

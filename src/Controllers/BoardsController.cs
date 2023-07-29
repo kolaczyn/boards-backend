@@ -1,11 +1,13 @@
 using boards.Application;
+using boards.Application.Dto;
+using boards.Application.UseCases;
 using boards.Dto;
 using Microsoft.AspNetCore.Mvc;
 
 namespace boards.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("boards")]
 public class BoardsController : ControllerBase
 {
     [HttpGet]
@@ -15,7 +17,7 @@ public class BoardsController : ControllerBase
     }
 
     [HttpGet("{slug}")]
-    public IActionResult Get([FromRoute] String slug, [FromServices] GetBoardBySlugUseCase useCase)
+    public IActionResult Get([FromRoute] string slug, [FromServices] GetBoardBySlugUseCase useCase)
     {
         var result = useCase.Execute(slug);
         if (result is null)
@@ -31,5 +33,11 @@ public class BoardsController : ControllerBase
     {
         var result = useCase.Execute(dto);
         return result;
+    }
+
+    [HttpGet("{slug}/threads")]
+    public IEnumerable<ThreadDto> GetThreads([FromRoute] string slug, [FromServices] GetThreadsListUseCase useCase)
+    {
+        return useCase.Execute(slug);
     }
 }

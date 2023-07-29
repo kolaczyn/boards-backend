@@ -1,4 +1,6 @@
 using boards.Domain;
+using boards.Infrastructure.Mappers;
+using boards.Infrastructure.Models;
 
 namespace boards.Infrastructure;
 
@@ -31,4 +33,11 @@ public class BoardsRepository : IBoardsRepository
 
         return board;
     }
+
+    public IEnumerable<ThreadDomain> GetThreadsBySlug(string slug)
+    {
+        var result = _dbContext.Threads.AsEnumerable().Where(x => x.Board.Slug == slug);
+        return result.Select(x => x.ToDomain());
+    }
+
 }

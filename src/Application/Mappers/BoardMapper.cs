@@ -1,6 +1,7 @@
+using boards.Domain;
 using boards.Dto;
 
-namespace boards.Application;
+namespace boards.Application.Mappers;
 
 public static class BoardMapper
 {

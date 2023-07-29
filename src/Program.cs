@@ -1,27 +1,25 @@
 using boards.Application;
+using boards.Application.UseCases;
 using boards.Domain;
 using boards.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddTransient<GetAllBoardsUseCase>();
-builder.Services.AddTransient<IBoardsRepository, BoardsRepository>();
-builder.Services.AddTransient<GetBoardBySlugUseCase>();
-builder.Services.AddTransient<GetAllBoardsUseCase>();
-builder.Services.AddTransient<CreateBoardUseCase>();
-
-builder.Services.AddDbContext<BoardDbContext>(options =>
 {
-    options.UseSqlite("Data Source=boards.db");
-});
+    builder.Services.AddControllers();
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+
+    builder.Services.AddTransient<GetAllBoardsUseCase>();
+    builder.Services.AddTransient<IBoardsRepository, BoardsRepository>();
+    builder.Services.AddTransient<GetBoardBySlugUseCase>();
+    builder.Services.AddTransient<GetAllBoardsUseCase>();
+    builder.Services.AddTransient<CreateBoardUseCase>();
+    builder.Services.AddTransient<GetThreadsListUseCase>();
+}
+
+builder.Services.AddDbContext<BoardDbContext>(options => { options.UseSqlite("Data Source=boards.db"); });
 
 var app = builder.Build();
 

@@ -1,4 +1,4 @@
-namespace boards;
+namespace boards.Domain;
 
 public class BoardDomain
 {

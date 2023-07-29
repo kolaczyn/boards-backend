@@ -1,7 +1,8 @@
+using boards.Application.Mappers;
 using boards.Domain;
 using boards.Dto;
 
-namespace boards.Application;
+namespace boards.Application.UseCases;
 
 public class CreateBoardUseCase
 {
