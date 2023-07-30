@@ -23,10 +23,17 @@ public class BoardsController : ControllerBase
     }
 
     [HttpGet("{slug}")]
-    public async Task<BoardsThreadsDto?> GetThreads([FromRoute] string slug,
+    public async Task<IActionResult> GetThreads([FromRoute] string slug,
         [FromServices] GetThreadsListUseCase useCase, CancellationToken cancellationToken)
     {
-        return await useCase.Execute(slug, cancellationToken);
+        var result = await useCase.Execute(slug, cancellationToken);
+        if (result.IsFailed)
+        {
+            return NotFound();
+
+        }
+
+        return Ok(result.Value);
     }
 
 

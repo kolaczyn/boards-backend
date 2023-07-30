@@ -1,6 +1,7 @@
 using boards.Domain;
 using boards.Infrastructure.Mappers;
 using boards.Infrastructure.Models;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace boards.Infrastructure;
@@ -18,13 +19,19 @@ public class BoardsRepository : IBoardsRepository
     {
         var threads = await _dbContext.Boards
             .ToListAsync(cancellationToken);
-        
+
         return threads.Select(x => x.ToDomain());
     }
 
-    public async Task<BoardDomain?> GetBySlug(string slug, CancellationToken cancellationToken)
+    public async Task<Result<BoardDomain>> GetBySlug(string slug, CancellationToken cancellationToken)
     {
-        return (await _dbContext.Boards.FindAsync(slug, cancellationToken))?.ToDomain();
+        var result = await _dbContext.Boards.FindAsync(slug, cancellationToken);
+        if (result == null)
+        {
+            return Result.Fail(new BoardDoesNotExist());
+        }
+
+        return Result.Ok(result.ToDomain());
     }
 
     public async Task<BoardDomain?> Create(BoardDomain board, CancellationToken cancellationToken)
@@ -37,12 +44,12 @@ public class BoardsRepository : IBoardsRepository
 
     public async Task<IEnumerable<ThreadDomain>> GetThreadsBySlug(string slug, CancellationToken cancellationToken)
     {
-        var threads =await _dbContext.Threads
+        var threads = await _dbContext.Threads
             .Include(x => x.Replies)
             .Include(x => x.Board)
             .Where(x => x.Board.Slug == slug)
             .ToListAsync(cancellationToken: cancellationToken);
-        
+
         return threads.Select(x => x.ToDomain());
     }
 
@@ -83,7 +90,7 @@ public class BoardsRepository : IBoardsRepository
         {
             return null;
         }
-        
+
         var newReply = new ReplyDb
         {
             Message = message,
@@ -91,10 +98,9 @@ public class BoardsRepository : IBoardsRepository
         };
         _dbContext.Replies.Add(newReply);
         await _dbContext.SaveChangesAsync(cancellationToken);
-        
+
         var reply = await _dbContext.Replies.FindAsync(newReply.Id, cancellationToken);
         return reply?.ToDomain();
-
     }
 
     public async Task<ThreadDomain?> GetThread(string slug, int threadId, CancellationToken cancellationToken)

@@ -1,6 +1,6 @@
 using boards.Application.Dto;
-using boards.Application.Mappers;
 using boards.Domain;
+using FluentResults;
 
 namespace boards.Application.UseCases;
 
@@ -13,39 +13,38 @@ public class GetThreadsListUseCase
         _boardRepository = boardRepository;
     }
 
-    public async Task<BoardsThreadsDto?> Execute(string boardSlug, CancellationToken cancellationToken)
+    public async Task<Result<BoardsThreadsDto>> Execute(string boardSlug, CancellationToken cancellationToken)
     {
         var result = await _boardRepository.GetThreadsBySlug(boardSlug, cancellationToken);
 
         var boardThreads = result.FirstOrDefault()?.Board;
 
-        // this is ugly af, but it should get the job done
-        if (boardThreads is null)
+        if (boardThreads is not null)
         {
-            var board = await _boardRepository.GetBySlug(boardSlug, cancellationToken);
-            if (board is null)
-            {
-                return null;
-            }
-
             return new BoardsThreadsDto
             {
-                Slug = board.Slug,
-                Name = board.Name,
-                Threads = Enumerable.Empty<ThreadTeaserDto>()
+                Slug = boardThreads.Slug,
+                Name = boardThreads.Name,
+                Threads = result.Select(x => new ThreadTeaserDto
+                {
+                    Id = x.Id,
+                    Message = x.Replies.First().Message,
+                    RepliesCount = x.Replies.Count()
+                })
             };
+        }
+
+        var board = await _boardRepository.GetBySlug(boardSlug, cancellationToken);
+        if (board.IsFailed)
+        {
+            return Result.Fail(new BoardDoesNotExist());
         }
 
         return new BoardsThreadsDto
         {
-            Slug = boardThreads.Slug,
-            Name = boardThreads.Name,
-            Threads = result.Select(x => new ThreadTeaserDto
-            {
-                Id = x.Id,
-                Message = x.Replies.First().Message,
-                RepliesCount = x.Replies.Count()
-            })
+            Slug = board.Value.Slug,
+            Name = board.Value.Name,
+            Threads = Enumerable.Empty<ThreadTeaserDto>()
         };
     }
 }
