@@ -18,13 +18,28 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddTransient<CreateThreadUseCase>();
     builder.Services.AddTransient<CreateReplyUseCase>();
     builder.Services.AddTransient<GetThreadUseCase>();
-        
+
     builder.Services.AddTransient<IBoardsRepository, BoardsRepository>();
 }
 
 builder.Services.AddDbContext<BoardDbContext>(options => { options.UseSqlite("Data Source=boards.db"); });
 
 var app = builder.Build();
+
+app.Use(async (ctx, next) =>
+{
+    ctx.Response.Headers["Access-Control-Allow-Origin"] = "*";
+    ctx.Response.Headers["Access-Control-Allow-Headers"] = "Origin, X-Requested-With, Content-Type, Accept";
+    ctx.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
+
+    if (HttpMethods.IsOptions(ctx.Request.Method))
+    {
+        ctx.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
+        await ctx.Response.CompleteAsync();
+        return;
+    }
+    await  next();
+});
 
 if (app.Environment.IsDevelopment())
 {
@@ -35,7 +50,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
 
 app.MapControllers();
 
