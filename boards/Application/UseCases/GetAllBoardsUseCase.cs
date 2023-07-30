@@ -11,9 +11,9 @@ public class GetAllBoardsUseCase
     {
         _repository = repository;
     }
-    public IEnumerable<BoardDto> Execute()
+    public async Task<IEnumerable<BoardDto>> Execute()
     {
-        var result = _repository.GetAll();
+        var result = await _repository.GetAll();
         
         return result.Select(x => x.ToDto());
     }

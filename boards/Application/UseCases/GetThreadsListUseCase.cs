@@ -13,16 +13,16 @@ public class GetThreadsListUseCase
         _boardRepository = boardRepository;
     }
 
-    public BoardsThreadsDto? Execute(string boardSlug)
+    public async Task<BoardsThreadsDto?> Execute(string boardSlug)
     {
-        var result = _boardRepository.GetThreadsBySlug(boardSlug);
+        var result = await _boardRepository.GetThreadsBySlug(boardSlug);
 
         var boardThreads = result.FirstOrDefault()?.Board;
 
         // this is ugly af, but it should get the job done
         if (boardThreads is null)
         {
-            var board = _boardRepository.GetBySlug(boardSlug);
+            var board = await _boardRepository.GetBySlug(boardSlug);
             if (board is null)
             {
                 return null;
@@ -35,7 +35,7 @@ public class GetThreadsListUseCase
                 Threads = Enumerable.Empty<ThreadTeaserDto>()
             };
         }
-        
+
         return new BoardsThreadsDto
         {
             Slug = boardThreads.Slug,

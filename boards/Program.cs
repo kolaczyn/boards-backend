@@ -11,7 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddSwaggerGen();
 
     builder.Services.AddTransient<GetAllBoardsUseCase>();
-    builder.Services.AddTransient<GetBoardBySlugUseCase>();
     builder.Services.AddTransient<GetAllBoardsUseCase>();
     builder.Services.AddTransient<CreateBoardUseCase>();
     builder.Services.AddTransient<GetThreadsListUseCase>();

@@ -12,9 +12,9 @@ public class CreateReplyUseCase
         _boardsRepository = boardsRepository;
     }
 
-    public ReplyDto? Execute(string slug, int threadId, string message)
+    public async Task<ReplyDto?> Execute(string slug, int threadId, string message)
     {
-        var reply = _boardsRepository.CreateReply(slug, threadId, message);
+        var reply = await _boardsRepository.CreateReply(slug, threadId, message);
         if (reply == null)
         {
             return null;

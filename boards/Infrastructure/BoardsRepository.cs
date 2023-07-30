@@ -14,40 +14,41 @@ public class BoardsRepository : IBoardsRepository
         _dbContext = dbContext;
     }
 
-    public IEnumerable<BoardDomain> GetAll()
+    public async Task<IEnumerable<BoardDomain>> GetAll()
     {
-        var db = _dbContext.Set<BoardDb>();
-        var domain = db.Select(x => x.ToDomain());
-        return domain;
-    }
-
-    public BoardDomain? GetBySlug(string slug)
-    {
-        return _dbContext.Boards.Find(slug)?.ToDomain();
-    }
-
-    public BoardDomain Create(BoardDomain board)
-    {
-        _dbContext.Add(board.ToDb());
-        _dbContext.SaveChanges();
-
-        return board;
-    }
-
-    public IEnumerable<ThreadDomain> GetThreadsBySlug(string slug)
-    {
-        var threads = _dbContext.Threads
-            .Include(x => x.Replies)
-            .Include(x => x.Board)
-            .Where(x => x.Board.Slug == slug)
-            .ToList();
+        var threads = await _dbContext.Boards
+            .ToListAsync();
         
         return threads.Select(x => x.ToDomain());
     }
 
-    public ThreadDomain? CreateThread(string slug, string message)
+    public async Task<BoardDomain?> GetBySlug(string slug)
     {
-        var board = _dbContext.Boards.Find(slug);
+        return (await _dbContext.Boards.FindAsync(slug))?.ToDomain();
+    }
+
+    public async Task<BoardDomain?> Create(BoardDomain board)
+    {
+        _dbContext.Add(board.ToDb());
+        await _dbContext.SaveChangesAsync();
+
+        return board;
+    }
+
+    public async Task<IEnumerable<ThreadDomain>> GetThreadsBySlug(string slug)
+    {
+        var threads =await _dbContext.Threads
+            .Include(x => x.Replies)
+            .Include(x => x.Board)
+            .Where(x => x.Board.Slug == slug)
+            .ToListAsync();
+        
+        return threads.Select(x => x.ToDomain());
+    }
+
+    public async Task<ThreadDomain?> CreateThread(string slug, string message)
+    {
+        var board = await _dbContext.Boards.FindAsync(slug);
         if (board == null)
         {
             return null;
@@ -60,7 +61,7 @@ public class BoardsRepository : IBoardsRepository
         };
 
         _dbContext.Threads.Add(newThread);
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
 
         var newReply = new ReplyDb
         {
@@ -68,15 +69,15 @@ public class BoardsRepository : IBoardsRepository
             Thread = newThread
         };
         _dbContext.Replies.Add(newReply);
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
 
-        var thread = _dbContext.Threads.Find(newThread.Id);
+        var thread = await _dbContext.Threads.FindAsync(newThread.Id);
         return thread?.ToDomain();
     }
 
-    public ReplyDomain? CreateReply(string slug, int threadId, string message)
+    public async Task<ReplyDomain?> CreateReply(string slug, int threadId, string message)
     {
-        var thread = _dbContext.Threads.Find(threadId);
+        var thread = await _dbContext.Threads.FindAsync(threadId);
         if (thread == null)
         {
             return null;
@@ -88,19 +89,19 @@ public class BoardsRepository : IBoardsRepository
             Thread = thread
         };
         _dbContext.Replies.Add(newReply);
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
         
-        var reply = _dbContext.Replies.Find(newReply.Id);
+        var reply = await _dbContext.Replies.FindAsync(newReply.Id);
         return reply?.ToDomain();
 
     }
 
-    public ThreadDomain? GetThread(string slug, int threadId)
+    public async Task<ThreadDomain?> GetThread(string slug, int threadId)
     {
-        var thread = _dbContext.Threads.Where(x => x.Board.Slug == slug)
+        var thread = await _dbContext.Threads.Where(x => x.Board.Slug == slug)
             .Include(x => x.Replies)
             .Include(x => x.Board)
-            .FirstOrDefault(x => x.Id == threadId);
+            .FirstOrDefaultAsync(x => x.Id == threadId);
 
         return thread?.ToDomain();
     }

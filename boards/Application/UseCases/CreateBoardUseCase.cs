@@ -13,13 +13,13 @@ public class CreateBoardUseCase
     }
     
     // this should be CreateBoardDto, but this should do for now
-    public BoardDto Execute(BoardDto board)
+    public async Task<BoardDto?> Execute(BoardDto board)
     {
-        var result = _repository.GetBySlug(board.Slug);
+        var result = await _repository.GetBySlug(board.Slug);
         if (result != null)
         {
             throw new Exception("Board already exists");
         }
-        return _repository.Create(board.ToDomain()).ToDto();
+        return (await _repository.Create(board.ToDomain()))?.ToDto();
     }
 }
