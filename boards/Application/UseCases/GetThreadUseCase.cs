@@ -13,9 +13,9 @@ public class GetThreadUseCase
         _boardsRepository = boardsRepository;
     }
 
-    public async Task<ThreadDto?> Execute(string slug, int threadId)
+    public async Task<ThreadDto?> Execute(string slug, int threadId, CancellationToken cancellationToken)
     {
-        var result = await _boardsRepository.GetThread(slug, threadId);
+        var result = await _boardsRepository.GetThread(slug, threadId, cancellationToken);
         return result?.ToDto();
     }
 }

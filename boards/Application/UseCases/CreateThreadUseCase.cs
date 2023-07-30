@@ -12,13 +12,13 @@ public class CreateThreadUseCase
         _boardRepository = boardRepository;
     }
     
-    public async Task<ThreadDto?> Execute(string boardSlug, string message)
+    public async Task<ThreadDto?> Execute(string boardSlug, string message, CancellationToken cancellationToken)
     {
-        var board = await _boardRepository.GetBySlug(boardSlug);
+        var board = await _boardRepository.GetBySlug(boardSlug, cancellationToken);
         if (board == null)
         {
             return null;
         }
-        return (await _boardRepository.CreateThread(boardSlug, message))?.ToDto();
+        return (await _boardRepository.CreateThread(boardSlug, message, cancellationToken))?.ToDto();
     } 
 }

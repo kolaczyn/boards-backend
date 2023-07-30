@@ -10,48 +10,48 @@ namespace boards.Controllers;
 public class BoardsController : ControllerBase
 {
     [HttpGet]
-    public async Task<IEnumerable<BoardDto>> Get([FromServices] GetAllBoardsUseCase useCase)
+    public async Task<IEnumerable<BoardDto>> Get([FromServices] GetAllBoardsUseCase useCase, CancellationToken cancellationToken)
     {
-        return await useCase.Execute();
+        return await useCase.Execute(cancellationToken);
     }
 
     [HttpPost]
     public async Task<BoardDto?> Post([FromBody] BoardDto dto,
-        [FromServices] CreateBoardUseCase useCase)
+        [FromServices] CreateBoardUseCase useCase, CancellationToken cancellationToken)
     {
-        return await useCase.Execute(dto);
+        return await useCase.Execute(dto, cancellationToken);
     }
 
     [HttpGet("{slug}")]
     public async Task<BoardsThreadsDto?> GetThreads([FromRoute] string slug,
-        [FromServices] GetThreadsListUseCase useCase)
+        [FromServices] GetThreadsListUseCase useCase, CancellationToken cancellationToken)
     {
-        return await useCase.Execute(slug);
+        return await useCase.Execute(slug, cancellationToken);
     }
 
 
     [HttpPost("{slug}/threads")]
     public async Task<ThreadDto?> PostThread([FromRoute] string slug,
         [FromBody] CreateThreadDto dto,
-        [FromServices] CreateThreadUseCase useCase)
+        [FromServices] CreateThreadUseCase useCase, CancellationToken cancellationToken)
     {
-        return await useCase.Execute(slug, dto.Message);
+        return await useCase.Execute(slug, dto.Message, cancellationToken);
     }
 
     [HttpGet("{slug}/threads/{threadId:int}")]
     public async Task<ThreadDto?> GetThread([FromRoute] string slug,
         [FromRoute] int threadId,
-        [FromServices] GetThreadUseCase useCase)
+        [FromServices] GetThreadUseCase useCase, CancellationToken cancellationToken)
     {
-        return await useCase.Execute(slug, threadId);
+        return await useCase.Execute(slug, threadId, cancellationToken);
     }
 
     [HttpPost("{slug}/threads/{threadId:int}/replies")]
     public async Task<ReplyDto?> CreateReply([FromRoute] string slug,
         [FromRoute] int threadId,
         [FromBody] CreateReplyDto dto,
-        [FromServices] CreateReplyUseCase useCase)
+        [FromServices] CreateReplyUseCase useCase, CancellationToken cancellationToken)
     {
-        return await useCase.Execute(slug, threadId, dto.Message);
+        return await useCase.Execute(slug, threadId, dto.Message, cancellationToken);
     }
 }
