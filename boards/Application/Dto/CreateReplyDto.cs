@@ -1,6 +1,6 @@
 namespace boards.Application.Dto;
 
-public class CreateThreadDto
+public class CreateReplyDto
 {
     public string Message { get; set; }
 }

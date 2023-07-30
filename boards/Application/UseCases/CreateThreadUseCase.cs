@@ -19,6 +19,6 @@ public class CreateThreadUseCase
         {
             return null;
         }
-        return _boardRepository.CreateThread(boardSlug, message).ToDto();
+        return _boardRepository.CreateThread(boardSlug, message)?.ToDto();
     } 
 }

@@ -73,4 +73,35 @@ public class BoardsRepository : IBoardsRepository
         var thread = _dbContext.Threads.Find(newThread.Id);
         return thread?.ToDomain();
     }
+
+    public ReplyDomain? CreateReply(string slug, int threadId, string message)
+    {
+        var thread = _dbContext.Threads.Find(threadId);
+        if (thread == null)
+        {
+            return null;
+        }
+        
+        var newReply = new ReplyDb
+        {
+            Message = message,
+            Thread = thread
+        };
+        _dbContext.Replies.Add(newReply);
+        _dbContext.SaveChanges();
+        
+        var reply = _dbContext.Replies.Find(newReply.Id);
+        return reply?.ToDomain();
+
+    }
+
+    public ThreadDomain? GetThread(string slug, int threadId)
+    {
+        var thread = _dbContext.Threads.Where(x => x.Board.Slug == slug)
+            .Include(x => x.Replies)
+            .Include(x => x.Board)
+            .FirstOrDefault(x => x.Id == threadId);
+
+        return thread?.ToDomain();
+    }
 }

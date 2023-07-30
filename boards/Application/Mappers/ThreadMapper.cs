@@ -10,7 +10,7 @@ public static class ThreadMapper
         return new ThreadDto
         {
             Replies = threadDomain.Replies.Select(ReplyMapper.ToDto),
-            Board = BoardMapper.ToDto(threadDomain.Board)
+            Id = threadDomain.Id
         };
     }
 }

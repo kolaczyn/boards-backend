@@ -10,3 +10,4 @@ dotnet tool install --global dotnet-ef
 - [ ] postgres
 - [ ] helpful error messages
 - [ ] build as part of CI
+- [ ] async

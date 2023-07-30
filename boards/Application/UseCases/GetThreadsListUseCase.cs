@@ -13,8 +13,22 @@ public class GetThreadsListUseCase
         _boardRepository = boardRepository;
     }
 
-    public IEnumerable<ThreadDto> Execute(string boardSlug)
+    public BoardsThreadsDto Execute(string boardSlug)
     {
-        return this._boardRepository.GetThreadsBySlug(boardSlug).Select(x => x.ToDto());
+        var result = _boardRepository.GetThreadsBySlug(boardSlug);
+
+        var board = result.First().Board;
+        
+        return new BoardsThreadsDto
+        {
+            Slug = board.Slug,
+            Name = board.Name,
+            Threads = result.Select(x => new ThreadTeaserDto
+            {
+                Id = x.Id,
+                Message = x.Replies.First().Message,
+                RepliesCount = x.Replies.Count()
+            })
+        };
     }
 }

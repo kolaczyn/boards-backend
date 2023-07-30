@@ -10,7 +10,8 @@ public static class ThreadMapper
         return new ThreadDomain
         {
             Replies = threadDb.Replies.Select(ReplyMapper.ToDomain),
-            Board = BoardMapper.ToDomain(threadDb.Board)
+            Board = BoardMapper.ToDomain(threadDb.Board),
+            Id = threadDb.Id
         };
     }
 }
