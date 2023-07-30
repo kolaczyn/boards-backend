@@ -5,7 +5,3 @@ riderModule.iml
 /_ReSharper.Caches/
 /.idea/
 boards.sln.DotSettings.user
-
-boards.db
-boards.db-shm
-boards.db-wal

@@ -25,8 +25,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<BoardDbContext>(options =>
 {
-    options.UseSqlite("Data Source=boards.db");
-    
+    options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"));
 });
 
 var app = builder.Build();
