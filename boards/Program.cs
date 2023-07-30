@@ -20,9 +20,14 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddTransient<GetThreadUseCase>();
 
     builder.Services.AddTransient<IBoardsRepository, BoardsRepository>();
+    
 }
 
-builder.Services.AddDbContext<BoardDbContext>(options => { options.UseSqlite("Data Source=boards.db"); });
+builder.Services.AddDbContext<BoardDbContext>(options =>
+{
+    options.UseSqlite("Data Source=boards.db");
+    
+});
 
 var app = builder.Build();
 
@@ -40,6 +45,12 @@ app.Use(async (ctx, next) =>
     }
     await  next();
 });
+
+{
+    using var scope = ServiceProviderServiceExtensions.CreateScope(app.Services);
+    var dbContext = scope.ServiceProvider.GetRequiredService<BoardDbContext>();
+    await dbContext.Database.MigrateAsync();
+}
 
 if (app.Environment.IsDevelopment())
 {
