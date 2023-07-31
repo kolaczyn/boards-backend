@@ -37,7 +37,7 @@ public class BoardsRepository : IBoardsRepository
         return board;
     }
 
-    public async Task<BoardsThreadsDomain?> GetThreadsBySlug(string slug, CancellationToken cancellationToken)
+    public async Task<BoardsThreadsDomain?> GetThreads(string slug, int token, CancellationToken cancellationToken)
     {
         var board = await _dbContext.Boards
             .Include(x => x.Threads)
