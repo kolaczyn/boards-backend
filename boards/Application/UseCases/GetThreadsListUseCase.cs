@@ -1,6 +1,7 @@
 using boards.Application.Dto;
 using boards.Application.Mappers;
 using boards.Domain;
+using boards.Domain.Errors;
 
 namespace boards.Application.UseCases;
 
@@ -13,16 +14,16 @@ public class GetThreadsListUseCase
         _boardRepository = boardRepository;
     }
 
-    public async Task<BoardsThreadsDto?> Execute(string boardSlug, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<(BoardsThreadsDto?, AppError?)> Execute(string boardSlug, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var result = await _boardRepository.GetThreads(boardSlug, page, pageSize, cancellationToken);
+        var (result, err) = await _boardRepository.GetThreads(boardSlug, page, pageSize, cancellationToken);
 
-        if (result is null)
+        if (err is not null)
         {
-            return null;
+            return (null, err);
         }
 
-        return new BoardsThreadsDto
+        var dto = new BoardsThreadsDto
         {
             Name = result.Name,
             Slug = result.Slug,
@@ -34,5 +35,7 @@ public class GetThreadsListUseCase
                 CreatedAt = x.CreatedAt
             })
         };
+
+        return (dto, null);
     }
 }

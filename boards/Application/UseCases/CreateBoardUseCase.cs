@@ -1,5 +1,6 @@
 using boards.Application.Mappers;
 using boards.Domain;
+using boards.Domain.Errors;
 using boards.Dto;
 
 namespace boards.Application.UseCases;
@@ -13,13 +14,16 @@ public class CreateBoardUseCase
     }
     
     // this should be CreateBoardDto, but this should do for now
-    public async Task<BoardDto?> Execute(BoardDto board, CancellationToken cancellationToken)
+    public async Task<(BoardDto?, AppError?)> Execute(BoardDto board, CancellationToken cancellationToken)
     {
-        var result = await _repository.GetBySlug(board.Slug, cancellationToken);
-        if (result != null)
+        var foundBoard = await _repository.GetBySlug(board.Slug, cancellationToken);
+        
+        if (foundBoard is not null)
         {
-            throw new Exception("Board already exists");
+            return (null, new BoardAlreadyExists());
         }
-        return (await _repository.Create(board.ToDomain(), cancellationToken))?.ToDto();
+        
+        var dto = (await _repository.Create(board.ToDomain(), cancellationToken))?.ToDto();
+        return (dto, null);
     }
 }

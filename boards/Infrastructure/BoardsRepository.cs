@@ -1,4 +1,5 @@
 using boards.Domain;
+using boards.Domain.Errors;
 using boards.Infrastructure.Mappers;
 using boards.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
@@ -37,7 +38,8 @@ public class BoardsRepository : IBoardsRepository
         return board;
     }
 
-    public async Task<BoardsThreadsDomain?> GetThreads(string slug, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<(BoardsThreadsDomain?, AppError?)> GetThreads(string slug, int page, int pageSize,
+        CancellationToken cancellationToken)
     {
         var board = await _dbContext.Boards
             .Include(x => x.Threads)
@@ -47,26 +49,26 @@ public class BoardsRepository : IBoardsRepository
 
         if (board is null)
         {
-            return null;
+            return (null, new BoardDoesNotExistErrors());
         }
 
-        return new BoardsThreadsDomain
+        var result = new BoardsThreadsDomain
         {
             Name = board.Name,
             Slug = board.Slug,
             Threads = board.Threads
                 // not the most optimal solution - we should paginate in the sql, but this should work for now :p
                 .Skip((page - 1) * pageSize)
-                .Take(pageSize).
-                Select(x => new ThreadTeaserDomain()
-            {
-                Id = x.Id,
-                Message = x.Replies.FirstOrDefault()?.Message ?? "",
-                RepliesCount = x.Replies.Count,
-                CreatedAt = x.CreatedAt
-            })
+                .Take(pageSize).Select(x => new ThreadTeaserDomain()
+                {
+                    Id = x.Id,
+                    Message = x.Replies.FirstOrDefault()?.Message ?? "",
+                    RepliesCount = x.Replies.Count,
+                    CreatedAt = x.CreatedAt
+                })
         };
 
+        return (result, null);
     }
 
     public async Task<ThreadDomain?> CreateThread(string slug, string message, CancellationToken cancellationToken)
@@ -102,8 +104,8 @@ public class BoardsRepository : IBoardsRepository
         {
             Board = thread.Board.ToDomain(),
             Id = thread.Id,
-          Replies = thread.Replies.Select(x => x.ToDomain()),
-          CreatedAt = now
+            Replies = thread.Replies.Select(x => x.ToDomain()),
+            CreatedAt = now
         };
     }
 

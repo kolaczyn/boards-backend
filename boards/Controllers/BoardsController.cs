@@ -1,8 +1,9 @@
+using System.Net;
 using boards.Application.Dto;
 using boards.Application.UseCases;
+using boards.Domain.Errors;
 using boards.Dto;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace boards.Controllers;
 
@@ -18,35 +19,74 @@ public class BoardsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<BoardDto?> CreateBoard([FromBody] BoardDto dto,
+    public async Task<IActionResult> CreateBoard([FromBody] BoardDto dto,
         [FromServices] CreateBoardUseCase useCase, CancellationToken cancellationToken)
     {
-        return await useCase.Execute(dto, cancellationToken);
+        var (response, err) = await useCase.Execute(dto, cancellationToken);
+
+        if (err is not null)
+        {
+            return err switch
+            {
+                BoardAlreadyExists => BadRequest("Board already exists"),
+                _ => StatusCode((int)HttpStatusCode.InternalServerError)
+            };
+        }
+
+        return Ok(response);
     }
 
     [HttpGet("{slug}")]
-    public async Task<BoardsThreadsDto?> GetThreads([FromRoute] string slug,
+    public async Task<IActionResult> GetThreads([FromRoute] string slug,
         [FromQuery] GetThreadsQueryDto query,
         [FromServices] GetThreadsListUseCase useCase, CancellationToken cancellationToken
-        )
+    )
     {
-        return await useCase.Execute(slug, query.Page, query.PageSize, cancellationToken);
+        var (result, err) = await useCase.Execute(slug, query.Page, query.PageSize, cancellationToken);
+
+        if (err is not null)
+        {
+            return err switch
+            {
+                BoardDoesNotExistErrors => NotFound("Board does not exist"),
+                _ => StatusCode((int)HttpStatusCode.InternalServerError)
+            };
+        }
+
+        return Ok(result);
     }
 
 
     [HttpPost("{slug}/threads")]
-    public async Task<ThreadDto?> CreateThread([FromRoute] string slug,
+    public async Task<IActionResult> CreateThread([FromRoute] string slug,
         [FromBody] CreateThreadDto dto,
         [FromServices] CreateThreadUseCase useCase, CancellationToken cancellationToken)
     {
-        return await useCase.Execute(slug, dto.Message, cancellationToken);
+        var (response, err) = await useCase.Execute(slug, dto.Message, cancellationToken);
+        
+        if (err is not null)
+        {
+            return err switch
+            {
+                BoardDoesNotExistErrors => NotFound("Board does not exist"),
+                _ => StatusCode((int)HttpStatusCode.InternalServerError)
+            };
+        }
+
+        return Ok(response);
     }
 
     [HttpGet("{slug}/threads/{threadId:int}")]
-    public async Task<ThreadDto?> GetThread([FromRoute] string slug, [FromRoute] int threadId,
+    public async Task<IActionResult> GetThread([FromRoute] string slug, [FromRoute] int threadId,
         [FromServices] GetThreadUseCase useCase, CancellationToken cancellationToken)
     {
-        return await useCase.Execute(slug, threadId, cancellationToken);
+        var result = await useCase.Execute(slug, threadId, cancellationToken);
+        if (result is null)
+        {
+            return Ok();
+        }
+
+        return Ok(result);
     }
 
     [HttpPost("{slug}/threads/{threadId:int}/replies")]
