@@ -13,3 +13,4 @@ dotnet tool install --global dotnet-ef
 - [x] use `required`
 - [ ] split into projects
     - [ ] split service registration
+- [ ] maybe use a library for validation (like FluentValidation)?

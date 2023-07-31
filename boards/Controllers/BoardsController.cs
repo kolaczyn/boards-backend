@@ -28,7 +28,7 @@ public class BoardsController : ControllerBase
         {
             return err switch
             {
-                BoardAlreadyExists => BadRequest("Board already exists"),
+                BoardAlreadyExists => BadRequest(err.Message),
                 _ => StatusCode((int)HttpStatusCode.InternalServerError)
             };
         }
@@ -48,7 +48,7 @@ public class BoardsController : ControllerBase
         {
             return err switch
             {
-                BoardDoesNotExistErrors => NotFound("Board does not exist"),
+                BoardDoesNotExistErrors => NotFound(err.Message),
                 _ => StatusCode((int)HttpStatusCode.InternalServerError)
             };
         }
@@ -68,7 +68,8 @@ public class BoardsController : ControllerBase
         {
             return err switch
             {
-                BoardDoesNotExistErrors => NotFound("Board does not exist"),
+                BoardDoesNotExistErrors => NotFound(err.Message),
+                ReplyTooShort => BadRequest(err.Message),
                 _ => StatusCode((int)HttpStatusCode.InternalServerError)
             };
         }

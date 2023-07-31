@@ -2,6 +2,7 @@ using boards.Application.Dto;
 using boards.Application.Mappers;
 using boards.Domain;
 using boards.Domain.Errors;
+using boards.Domain.Validation;
 
 namespace boards.Application.UseCases;
 
@@ -14,9 +15,15 @@ public class CreateThreadUseCase
         _boardRepository = boardRepository;
     }
 
-    public async Task<(ThreadDto?, AppError?)> Execute(string boardSlug, string message,
+    public async Task<(ThreadDto?, IAppError?)> Execute(string boardSlug, string message,
         CancellationToken cancellationToken)
     {
+        // TODO should this be injected?
+        var validationError = ReplyValidation.ValidateReply(message);
+        if (validationError is not null)
+        {
+            return (null, validationError);
+        }
         var board = await _boardRepository.GetBySlug(boardSlug, cancellationToken);
         if (board is null)
         {

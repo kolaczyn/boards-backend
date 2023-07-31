@@ -8,7 +8,7 @@ public interface IBoardsRepository
     public Task<BoardDomain?> GetBySlug(string slug, CancellationToken cancellationToken);
     public Task<BoardDomain?> Create(BoardDomain board, CancellationToken cancellationToken);
 
-    public Task<(BoardsThreadsDomain?, AppError?)> GetThreads(string slug, int page, int pageSize,
+    public Task<(BoardsThreadsDomain?, IAppError?)> GetThreads(string slug, int page, int pageSize,
         CancellationToken cancellationToken);
 
     public Task<ThreadDomain?> CreateThread(string slug, string message, CancellationToken cancellationToken);

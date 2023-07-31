@@ -14,7 +14,7 @@ public class CreateBoardUseCase
     }
     
     // this should be CreateBoardDto, but this should do for now
-    public async Task<(BoardDto?, AppError?)> Execute(BoardDto board, CancellationToken cancellationToken)
+    public async Task<(BoardDto?, IAppError?)> Execute(BoardDto board, CancellationToken cancellationToken)
     {
         var foundBoard = await _repository.GetBySlug(board.Slug, cancellationToken);
         

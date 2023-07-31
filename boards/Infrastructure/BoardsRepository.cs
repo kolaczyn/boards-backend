@@ -38,7 +38,7 @@ public class BoardsRepository : IBoardsRepository
         return board;
     }
 
-    public async Task<(BoardsThreadsDomain?, AppError?)> GetThreads(string slug, int page, int pageSize,
+    public async Task<(BoardsThreadsDomain?, IAppError?)> GetThreads(string slug, int page, int pageSize,
         CancellationToken cancellationToken)
     {
         var board = await _dbContext.Boards
