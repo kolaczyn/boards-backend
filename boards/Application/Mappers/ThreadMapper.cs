@@ -5,12 +5,13 @@ namespace boards.Application.Mappers;
 
 public static class ThreadMapper
 {
-    public static ThreadDto ToDto(this ThreadDomain threadDomain)
+    public static ThreadDto ToDto(this ThreadDomain domain)
     {
         return new ThreadDto
         {
-            Replies = threadDomain.Replies.Select(ReplyMapper.ToDto),
-            Id = threadDomain.Id
+            Replies = domain.Replies.Select(ReplyMapper.ToDto),
+            Id = domain.Id,
+            CreatedAt = domain.CreatedAt
         };
     }
 }

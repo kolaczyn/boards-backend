@@ -8,10 +8,12 @@ namespace boards.Infrastructure;
 public class BoardsRepository : IBoardsRepository
 {
     private readonly BoardDbContext _dbContext;
+    private readonly IDateTimeProvider _dateTimeProvider;
 
-    public BoardsRepository(BoardDbContext dbContext)
+    public BoardsRepository(BoardDbContext dbContext, IDateTimeProvider dateTimeProvider)
     {
         _dbContext = dbContext;
+        _dateTimeProvider = dateTimeProvider;
     }
 
     public async Task<IEnumerable<BoardDomain>> GetAll(CancellationToken cancellationToken)
@@ -56,7 +58,8 @@ public class BoardsRepository : IBoardsRepository
             {
                 Id = x.Id,
                 Message = x.Replies.FirstOrDefault()?.Message ?? "",
-                RepliesCount = x.Replies.Count
+                RepliesCount = x.Replies.Count,
+                CreatedAt = x.CreatedAt
             })
         };
 
@@ -70,10 +73,12 @@ public class BoardsRepository : IBoardsRepository
             return null;
         }
 
+        var now = _dateTimeProvider.Now();
         var newThread = new ThreadDb
         {
             Board = board,
             Replies = new List<ReplyDb>(),
+            CreatedAt = now,
         };
 
         _dbContext.Threads.Add(newThread);
@@ -82,7 +87,8 @@ public class BoardsRepository : IBoardsRepository
         var newReply = new ReplyDb
         {
             Message = message,
-            Thread = newThread
+            Thread = newThread,
+            CreatedAt = now,
         };
         _dbContext.Replies.Add(newReply);
         await _dbContext.SaveChangesAsync(cancellationToken);
@@ -92,7 +98,8 @@ public class BoardsRepository : IBoardsRepository
         {
             Board = thread.Board.ToDomain(),
             Id = thread.Id,
-            Replies = thread.Replies.Select(x => x.ToDomain())
+          Replies = thread.Replies.Select(x => x.ToDomain()),
+          CreatedAt = now
         };
     }
 
@@ -105,10 +112,12 @@ public class BoardsRepository : IBoardsRepository
             return null;
         }
 
+        var now = _dateTimeProvider.Now();
         var newReply = new ReplyDb
         {
             Message = message,
-            Thread = thread
+            Thread = thread,
+            CreatedAt = now
         };
         _dbContext.Replies.Add(newReply);
         await _dbContext.SaveChangesAsync(cancellationToken);

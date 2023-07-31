@@ -5,19 +5,12 @@ namespace boards.Application.Mappers;
 
 public static class ReplyMapper
 {
-    public static ReplyDto ToDto(this ReplyDomain replyDomain)
+    public static ReplyDto ToDto(this ReplyDomain domain)
     {
         return new ReplyDto
         {
-            Message = replyDomain.Message
-        };
-    }
-    
-    public static ReplyDomain ToDomain(this ReplyDto replyDto)
-    {
-        return new ReplyDomain
-        {
-            Message = replyDto.Message
+            Message = domain.Message,
+            CreatedAt = domain.CreatedAt
         };
     }
 }

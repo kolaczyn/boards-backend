@@ -5,11 +5,12 @@ namespace boards.Infrastructure.Mappers;
 
 public static class ReplyMapper
 {
-    public static ReplyDomain ToDomain(this ReplyDb replyDb)
+    public static ReplyDomain ToDomain(this ReplyDb db)
     {
         return new ReplyDomain
         {
-            Message = replyDb.Message
+            Message = db.Message,
+            CreatedAt = db.CreatedAt
         };
     }
 }

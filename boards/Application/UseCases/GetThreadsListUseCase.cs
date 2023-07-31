@@ -30,7 +30,8 @@ public class GetThreadsListUseCase
             {
                 Id = x.Id,
                 Message = x.Message,
-                RepliesCount = x.RepliesCount
+                RepliesCount = x.RepliesCount,
+                CreatedAt = x.CreatedAt
             })
         };
     }

@@ -22,7 +22,8 @@ public class CreateReplyUseCase
 
         return new ReplyDto
         {
-            Message = reply.Message
+            Message = reply.Message,
+            CreatedAt = reply.CreatedAt
         };
     }
 }

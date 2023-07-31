@@ -1,6 +1,7 @@
 using boards.Application.UseCases;
 using boards.Domain;
 using boards.Infrastructure;
+using boards.Infrastructure.Providers;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,7 +20,8 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddTransient<GetThreadUseCase>();
 
     builder.Services.AddTransient<IBoardsRepository, BoardsRepository>();
-    
+    builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+
 }
 
 builder.Services.AddDbContext<BoardDbContext>(options =>

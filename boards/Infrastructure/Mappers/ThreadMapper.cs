@@ -5,13 +5,14 @@ namespace boards.Infrastructure.Mappers;
 
 public static class ThreadMapper
 {
-    public static ThreadDomain ToDomain(this ThreadDb threadDb)
+    public static ThreadDomain ToDomain(this ThreadDb db)
     {
         return new ThreadDomain
         {
-            Replies = threadDb.Replies.Select(ReplyMapper.ToDomain),
-            Board = BoardMapper.ToDomain(threadDb.Board),
-            Id = threadDb.Id
+            Replies = db.Replies.Select(ReplyMapper.ToDomain),
+            Board = db.Board.ToDomain(),
+            Id = db.Id,
+            CreatedAt = db.CreatedAt
         };
     }
 }

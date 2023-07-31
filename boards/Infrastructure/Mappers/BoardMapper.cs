@@ -5,21 +5,21 @@ namespace boards.Infrastructure.Mappers;
 
 public static class BoardMapper
 {
-    public static BoardDomain ToDomain(this BoardDb board)
+    public static BoardDomain ToDomain(this BoardDb db)
     {
         return new BoardDomain
         {
-            Slug = board.Slug,
-            Name = board.Name
+            Slug = db.Slug,
+            Name = db.Name
         };
     }
     
-    public static BoardDb ToDb(this BoardDomain board)
+    public static BoardDb ToDb(this BoardDomain domain)
     {
         return new BoardDb
         {
-            Slug = board.Slug,
-            Name = board.Name
+            Slug = domain.Slug,
+            Name = domain.Name
         };
     }
 }

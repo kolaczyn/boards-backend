@@ -11,3 +11,5 @@ dotnet tool install --global dotnet-ef
 - [x] build as part of CI
 - [x] async
 - [x] use `required`
+- [ ] split into projects
+    - [ ] split service registration
