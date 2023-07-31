@@ -10,3 +10,4 @@ dotnet tool install --global dotnet-ef
 - [ ] helpful error messages
 - [x] build as part of CI
 - [x] async
+- [x] use `required`

@@ -3,7 +3,7 @@ namespace boards.Application.Dto;
 
 public class BoardsThreadsDto
 {
-    public string Slug { get; set; }
-    public string Name { get; set; }
-    public IEnumerable<ThreadTeaserDto> Threads { get; set; }
+    public required string Slug { get; set; }
+    public required string Name { get; set; }
+    public required IEnumerable<ThreadTeaserDto> Threads { get; set; }
 }

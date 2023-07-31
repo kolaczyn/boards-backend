@@ -2,6 +2,6 @@ namespace boards.Domain;
 
 public class BoardDomain
 {
-    public string Slug { get; set; }
-    public string Name { get; set; }
+    public required  string Slug { get; set; }
+    public required string Name { get; set; }
 }

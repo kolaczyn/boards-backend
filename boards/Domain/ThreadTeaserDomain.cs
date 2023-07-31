@@ -1,6 +1,6 @@
-namespace boards.Application.Dto;
+namespace boards.Domain;
 
-public class ThreadTeaserDto
+public class ThreadTeaserDomain
 {
     public required int Id { get; set; }
     public required string Message { get; set; }
