@@ -13,9 +13,9 @@ public class GetThreadsListUseCase
         _boardRepository = boardRepository;
     }
 
-    public async Task<BoardsThreadsDto?> Execute(string boardSlug, int page, CancellationToken cancellationToken)
+    public async Task<BoardsThreadsDto?> Execute(string boardSlug, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var result = await _boardRepository.GetThreads(boardSlug, page, cancellationToken);
+        var result = await _boardRepository.GetThreads(boardSlug, page, pageSize, cancellationToken);
 
         if (result is null)
         {

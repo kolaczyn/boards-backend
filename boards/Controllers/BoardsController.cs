@@ -11,7 +11,8 @@ namespace boards.Controllers;
 public class BoardsController : ControllerBase
 {
     [HttpGet]
-    public async Task<IEnumerable<BoardDto>> GetBoards([FromServices] GetAllBoardsUseCase useCase, CancellationToken cancellationToken)
+    public async Task<IEnumerable<BoardDto>> GetBoards([FromServices] GetAllBoardsUseCase useCase,
+        CancellationToken cancellationToken)
     {
         return await useCase.Execute(cancellationToken);
     }
@@ -24,10 +25,12 @@ public class BoardsController : ControllerBase
     }
 
     [HttpGet("{slug}")]
-    public async Task<BoardsThreadsDto?> GetThreads([FromRoute] string slug, [FromQuery] int page,
-        [FromServices] GetThreadsListUseCase useCase, CancellationToken cancellationToken)
+    public async Task<BoardsThreadsDto?> GetThreads([FromRoute] string slug,
+        [FromQuery] GetThreadsQueryDto query,
+        [FromServices] GetThreadsListUseCase useCase, CancellationToken cancellationToken
+        )
     {
-        return await useCase.Execute(slug, page, cancellationToken);
+        return await useCase.Execute(slug, query.Page, query.PageSize, cancellationToken);
     }
 
 

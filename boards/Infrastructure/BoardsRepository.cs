@@ -37,7 +37,7 @@ public class BoardsRepository : IBoardsRepository
         return board;
     }
 
-    public async Task<BoardsThreadsDomain?> GetThreads(string slug, int token, CancellationToken cancellationToken)
+    public async Task<BoardsThreadsDomain?> GetThreads(string slug, int page, int pageSize, CancellationToken cancellationToken)
     {
         var board = await _dbContext.Boards
             .Include(x => x.Threads)
@@ -54,7 +54,11 @@ public class BoardsRepository : IBoardsRepository
         {
             Name = board.Name,
             Slug = board.Slug,
-            Threads = board.Threads.Select(x => new ThreadTeaserDomain()
+            Threads = board.Threads
+                // not the most optimal solution - we should paginate in the sql, but this should work for now :p
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize).
+                Select(x => new ThreadTeaserDomain()
             {
                 Id = x.Id,
                 Message = x.Replies.FirstOrDefault()?.Message ?? "",
