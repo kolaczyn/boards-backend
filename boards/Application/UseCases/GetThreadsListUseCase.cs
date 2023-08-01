@@ -18,7 +18,7 @@ public class GetThreadsListUseCase
     {
         var (result, err) = await _boardRepository.GetThreads(boardSlug, page, pageSize, cancellationToken);
 
-        if (err is not null)
+        if (result is null)
         {
             return (null, err);
         }

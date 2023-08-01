@@ -10,7 +10,8 @@ public static class ReplyMapper
         return new ReplyDto
         {
             Message = domain.Message,
-            CreatedAt = domain.CreatedAt
+            CreatedAt = domain.CreatedAt,
+            Id = domain.Id
         };
     }
 }

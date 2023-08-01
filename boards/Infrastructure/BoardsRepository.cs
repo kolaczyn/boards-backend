@@ -49,7 +49,7 @@ public class BoardsRepository : IBoardsRepository
 
         if (board is null)
         {
-            return (null, new BoardDoesNotExistErrors());
+            return (null, new BoardDoesNotExistError());
         }
 
         var result = new BoardsThreadsDomain
@@ -99,7 +99,7 @@ public class BoardsRepository : IBoardsRepository
         _dbContext.Replies.Add(newReply);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        var thread = await _dbContext.Threads.FindAsync(newThread.Id);
+        var thread = await _dbContext.Threads.FindAsync(newThread.Id, cancellationToken);
         return new ThreadDomain
         {
             Board = thread.Board.ToDomain(),
@@ -130,6 +130,36 @@ public class BoardsRepository : IBoardsRepository
 
         var reply = await _dbContext.Replies.FindAsync(newReply.Id, cancellationToken);
         return reply?.ToDomain();
+    }
+
+    public async Task<ReplyDomain?> GetReply(string slug, int threadId, int replyId, CancellationToken cancellationToken)
+    {
+        var reply = await _dbContext.Replies
+            .Include(x => x.Thread)
+            .ThenInclude(x => x.Board)
+            .FirstOrDefaultAsync(x => x.Id == replyId && x.Thread.Id == threadId && x.Thread.Board.Slug == slug,
+                cancellationToken);
+
+        return reply?.ToDomain();
+    }
+
+    public async Task<ReplyDomain?> DeleteReply(string slug, int threadId, int replyId, CancellationToken cancellationToken)
+    {
+        var reply = await _dbContext.Replies
+            .Include(x => x.Thread)
+            .ThenInclude(x => x.Board)
+            .FirstOrDefaultAsync(x => x.Id == replyId && x.Thread.Id == threadId && x.Thread.Board.Slug == slug,
+                cancellationToken);
+
+        if (reply == null)
+        {
+            return null;
+        }
+        
+        _dbContext.Replies.Remove(reply);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return reply.ToDomain();
     }
 
     public async Task<ThreadDomain?> GetThread(string slug, int threadId, CancellationToken cancellationToken)

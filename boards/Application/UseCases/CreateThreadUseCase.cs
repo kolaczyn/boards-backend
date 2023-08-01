@@ -27,7 +27,7 @@ public class CreateThreadUseCase
         var board = await _boardRepository.GetBySlug(boardSlug, cancellationToken);
         if (board is null)
         {
-            return (null, new BoardDoesNotExistErrors());
+            return (null, new BoardDoesNotExistError());
         }
 
         var result = (await _boardRepository.CreateThread(boardSlug, message, cancellationToken))?.ToDto();

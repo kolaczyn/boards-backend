@@ -24,7 +24,7 @@ public class BoardsController : ControllerBase
     {
         var (response, err) = await useCase.Execute(dto, cancellationToken);
 
-        if (err is not null)
+        if (response is null)
         {
             return err switch
             {
@@ -34,7 +34,7 @@ public class BoardsController : ControllerBase
             };
         }
 
-        return Ok(response);
+        return Created($"/boards/{response.Slug}",response);
     }
 
     [HttpGet("{slug}")]
@@ -43,18 +43,18 @@ public class BoardsController : ControllerBase
         [FromServices] GetThreadsListUseCase useCase, CancellationToken cancellationToken
     )
     {
-        var (result, err) = await useCase.Execute(slug, query.Page, query.PageSize, cancellationToken);
+        var (response, err) = await useCase.Execute(slug, query.Page, query.PageSize, cancellationToken);
 
         if (err is not null)
         {
             return err switch
             {
-                BoardDoesNotExistErrors => NotFound(err.Message),
+                BoardDoesNotExistError => NotFound(err.Message),
                 _ => StatusCode((int)HttpStatusCode.InternalServerError)
             };
         }
 
-        return Ok(result);
+        return Ok(response);
     }
 
 
@@ -64,12 +64,12 @@ public class BoardsController : ControllerBase
         [FromServices] CreateThreadUseCase useCase, CancellationToken cancellationToken)
     {
         var (response, err) = await useCase.Execute(slug, dto.Message, cancellationToken);
-        
+
         if (err is not null)
         {
             return err switch
             {
-                BoardDoesNotExistErrors => NotFound(err.Message),
+                BoardDoesNotExistError => NotFound(err.Message),
                 ReplyTooShort => BadRequest(err.Message),
                 _ => StatusCode((int)HttpStatusCode.InternalServerError)
             };
@@ -82,13 +82,13 @@ public class BoardsController : ControllerBase
     public async Task<IActionResult> GetThread([FromRoute] string slug, [FromRoute] int threadId,
         [FromServices] GetThreadUseCase useCase, CancellationToken cancellationToken)
     {
-        var result = await useCase.Execute(slug, threadId, cancellationToken);
-        if (result is null)
+        var response = await useCase.Execute(slug, threadId, cancellationToken);
+        if (response is null)
         {
             return Ok();
         }
 
-        return Ok(result);
+        return Ok(response);
     }
 
     [HttpPost("{slug}/threads/{threadId:int}/replies")]
@@ -98,5 +98,27 @@ public class BoardsController : ControllerBase
         [FromServices] CreateReplyUseCase useCase, CancellationToken cancellationToken)
     {
         return await useCase.Execute(slug, threadId, dto.Message, cancellationToken);
+    }
+
+    [HttpDelete("{slug}/threads/{threadId:int}/replies/{replyId:int}")]
+    public async Task<IActionResult> DeleteReply([FromRoute] string slug,
+        [FromRoute] int threadId,
+        [FromRoute] int replyId,
+        [FromBody] PasswordProtectionDto dto,
+        [FromServices] DeleteReplyUseCase useCase, CancellationToken cancellationToken)
+    {
+        var (response, err) = await useCase.Execute(slug, threadId, replyId, dto.Password, cancellationToken);
+
+        if (response is null)
+        {
+            return err switch
+            {
+                ReplyDoesNotExist => NotFound(err.Message),
+                WrongPasswordErr => Unauthorized(err.Message),
+                _ => StatusCode((int)HttpStatusCode.InternalServerError)
+            };
+        }
+
+        return Ok(response);
     }
 }

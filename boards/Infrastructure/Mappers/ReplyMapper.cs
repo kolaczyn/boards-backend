@@ -9,6 +9,7 @@ public static class ReplyMapper
     {
         return new ReplyDomain
         {
+            Id = db.Id,
             Message = db.Message,
             CreatedAt = db.CreatedAt
         };
