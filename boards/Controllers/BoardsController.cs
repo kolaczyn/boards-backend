@@ -19,7 +19,7 @@ public class BoardsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateBoard([FromBody] BoardDto dto,
+    public async Task<IActionResult> CreateBoard([FromBody] CreateBoardDto dto,
         [FromServices] CreateBoardUseCase useCase, CancellationToken cancellationToken)
     {
         var (response, err) = await useCase.Execute(dto, cancellationToken);
@@ -29,6 +29,7 @@ public class BoardsController : ControllerBase
             return err switch
             {
                 BoardAlreadyExists => BadRequest(err.Message),
+                WrongPasswordErr => Unauthorized(err.Message),
                 _ => StatusCode((int)HttpStatusCode.InternalServerError)
             };
         }
