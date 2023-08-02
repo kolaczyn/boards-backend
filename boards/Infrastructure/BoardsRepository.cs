@@ -1,6 +1,7 @@
 using boards.Domain.Errors;
 using boards.Domain.Models;
 using boards.Domain.Providers;
+using boards.Domain.Queries;
 using boards.Domain.Repositories;
 using boards.Infrastructure.Mappers;
 using boards.Infrastructure.Models;
@@ -40,13 +41,13 @@ public class BoardsRepository : IBoardsRepository
         return board;
     }
 
-    public async Task<(BoardsThreadsDomain?, IAppError?)> GetThreads(string slug, int page, int pageSize,
+    public async Task<(BoardsThreadsDomain?, IAppError?)> GetThreads(BoardThreadsQuery query,
         CancellationToken cancellationToken)
     {
         var board = await _dbContext.Boards
             .Include(x => x.Threads)
             .ThenInclude(t => t.Replies)
-            .Where(x => x.Slug == slug)
+            .Where(x => x.Slug == query.Slug)
             .FirstOrDefaultAsync(cancellationToken);
 
         if (board is null)
@@ -54,21 +55,29 @@ public class BoardsRepository : IBoardsRepository
             return (null, new BoardDoesNotExistError());
         }
 
+        var threads = board.Threads
+            // not the most optimal solution - we should paginate in the sql, but this should work for now :p
+            .Skip((query.Page - 1) * query.PageSize)
+            .Take(query.PageSize).Select(x => new ThreadTeaserDomain()
+            {
+                Id = x.Id,
+                Message = x.Replies.FirstOrDefault()?.Message ?? "",
+                RepliesCount = x.Replies.Count,
+                CreatedAt = x.CreatedAt
+            });
+
+        // again - sorting should probably be done on the sql level, but whatever :D
+        var sortedThreads = query.SortOrder == ThreadSortOrder.CreationDate
+            ? threads.OrderByDescending(x => x.CreatedAt)
+            : threads.OrderByDescending(x => x.RepliesCount);
+
         var result = new BoardsThreadsDomain
         {
             Name = board.Name,
             Slug = board.Slug,
-            Threads = board.Threads
-                // not the most optimal solution - we should paginate in the sql, but this should work for now :p
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize).Select(x => new ThreadTeaserDomain()
-                {
-                    Id = x.Id,
-                    Message = x.Replies.FirstOrDefault()?.Message ?? "",
-                    RepliesCount = x.Replies.Count,
-                    CreatedAt = x.CreatedAt
-                })
+            Threads = sortedThreads
         };
+        
 
         return (result, null);
     }

@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using boards.Application.UseCases;
 using boards.Domain.Providers;
 using boards.Domain.Repositories;
@@ -8,7 +9,10 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 {
-    builder.Services.AddControllers();
+    builder.Services.AddControllers().AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
@@ -33,7 +37,9 @@ builder.Services.AddDbContext<BoardDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"));
 });
 
+
 var app = builder.Build();
+
 
 app.Use(async (ctx, next) =>
 {
