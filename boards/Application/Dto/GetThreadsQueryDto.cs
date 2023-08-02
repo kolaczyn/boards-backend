@@ -1,7 +1,11 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace boards.Application.Dto;
 
 public class GetThreadsQueryDto
 {
-    required public int Page { get; set; } = 1;
-    required public int PageSize { get; set; } = 24;
+    [Required]
+    public required int Page { get; init; } = 1;
+    [Required]
+    public required int PageSize { get; init; } = 24;
 }

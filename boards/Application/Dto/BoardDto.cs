@@ -1,7 +1,11 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace boards.Dto;
 
 public class BoardDto
 {
-    public required string Slug { get; set; }
-    public required string Name { get; set; }
+    [Required]
+    public required string Slug { get; init; }
+    [Required]
+    public required string Name { get; init; }
 }

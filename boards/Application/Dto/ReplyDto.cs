@@ -1,8 +1,12 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace boards.Application.Dto;
 
 public class ReplyDto
 {
-    public required int Id { get; set; }
-    public required string Message { get; set; }
-    public required DateTime? CreatedAt { get; set; }
+    [Required]
+    public required int Id { get; init; }
+    [Required]
+    public required string Message { get; init; }
+    public required DateTime? CreatedAt { get; init; }
 }

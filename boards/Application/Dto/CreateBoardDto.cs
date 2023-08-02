@@ -1,8 +1,13 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace boards.Application.Dto;
 
 public class CreateBoardDto
 {
-    public required string Slug { get; set; }
-    public required string Name { get; set; }
-    public required string Password { get; set; }
+    [Required]
+    public required string Slug { get; init; }
+    [Required]
+    public required string Name { get; init; }
+    [Required]
+    public required string Password { get; init; }
 }

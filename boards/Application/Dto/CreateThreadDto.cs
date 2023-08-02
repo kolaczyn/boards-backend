@@ -1,6 +1,9 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace boards.Application.Dto;
 
 public class CreateThreadDto
 {
-    public required string Message { get; set; }
+    [Required]
+    public required string Message { get; init; }
 }

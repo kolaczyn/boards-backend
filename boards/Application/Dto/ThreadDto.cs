@@ -1,8 +1,12 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace boards.Application.Dto;
 
 public class ThreadDto
 {
-    public required int Id { get; set; }
-    public required IEnumerable<ReplyDto> Replies { get; set; }
-    public required DateTime? CreatedAt { get; set; }
+    [Required]
+    public required int Id { get; init; }
+    [Required]
+    public required IEnumerable<ReplyDto> Replies { get; init; }
+    public required DateTime? CreatedAt { get; init; }
 }
