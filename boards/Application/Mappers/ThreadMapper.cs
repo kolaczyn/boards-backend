@@ -1,5 +1,5 @@
 using boards.Application.Dto;
-using boards.Domain;
+using boards.Domain.Models;
 
 namespace boards.Application.Mappers;
 

@@ -1,4 +1,4 @@
-namespace boards.Domain;
+namespace boards.Domain.Providers;
 
 public enum CheckPasswordResult
 {

@@ -1,4 +1,4 @@
-using boards.Domain;
+using boards.Domain.Models;
 using boards.Dto;
 
 namespace boards.Application.Mappers;

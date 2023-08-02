@@ -1,6 +1,6 @@
 using boards.Application.Dto;
 using boards.Application.Mappers;
-using boards.Domain;
+using boards.Domain.Repositories;
 using boards.Domain.Errors;
 using boards.Domain.Validation;
 

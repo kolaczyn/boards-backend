@@ -43,7 +43,8 @@ public class BoardsController : ControllerBase
         [FromServices] GetThreadsListUseCase useCase, CancellationToken cancellationToken
     )
     {
-        var (response, err) = await useCase.Execute(slug, query.Page, query.PageSize, cancellationToken);
+        var (response, err) = await useCase.Execute(slug,
+            query.Page, query.PageSize, query.SortOrder, cancellationToken);
 
         if (err is not null)
         {

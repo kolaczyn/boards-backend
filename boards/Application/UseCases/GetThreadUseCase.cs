@@ -1,6 +1,6 @@
 using boards.Application.Dto;
 using boards.Application.Mappers;
-using boards.Domain;
+using boards.Domain.Repositories;
 
 namespace boards.Application.UseCases;
 

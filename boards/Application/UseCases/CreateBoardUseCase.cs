@@ -1,7 +1,9 @@
 using boards.Application.Dto;
 using boards.Application.Mappers;
-using boards.Domain;
 using boards.Domain.Errors;
+using boards.Domain.Models;
+using boards.Domain.Providers;
+using boards.Domain.Repositories;
 using boards.Dto;
 
 namespace boards.Application.UseCases;

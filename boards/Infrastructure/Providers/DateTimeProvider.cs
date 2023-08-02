@@ -1,4 +1,4 @@
-using boards.Domain;
+using boards.Domain.Providers;
 
 namespace boards.Infrastructure.Providers;
 

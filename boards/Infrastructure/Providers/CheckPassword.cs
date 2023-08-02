@@ -1,4 +1,4 @@
-using boards.Domain;
+using boards.Domain.Providers;
 using Microsoft.Extensions.Options;
 
 namespace boards.Infrastructure.Providers;

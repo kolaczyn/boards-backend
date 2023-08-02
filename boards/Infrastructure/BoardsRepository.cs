@@ -1,5 +1,7 @@
-using boards.Domain;
 using boards.Domain.Errors;
+using boards.Domain.Models;
+using boards.Domain.Providers;
+using boards.Domain.Repositories;
 using boards.Infrastructure.Mappers;
 using boards.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;

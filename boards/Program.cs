@@ -1,5 +1,6 @@
 using boards.Application.UseCases;
-using boards.Domain;
+using boards.Domain.Providers;
+using boards.Domain.Repositories;
 using boards.Infrastructure;
 using boards.Infrastructure.Providers;
 using Microsoft.EntityFrameworkCore;

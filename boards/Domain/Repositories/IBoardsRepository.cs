@@ -1,6 +1,7 @@
 using boards.Domain.Errors;
+using boards.Domain.Models;
 
-namespace boards.Domain;
+namespace boards.Domain.Repositories;
 
 public interface IBoardsRepository
 {

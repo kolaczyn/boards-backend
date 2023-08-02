@@ -1,4 +1,4 @@
-namespace boards.Domain;
+namespace boards.Domain.Models;
 
 public class ThreadTeaserDomain
 {
