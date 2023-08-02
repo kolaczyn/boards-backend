@@ -59,7 +59,7 @@ public class BoardsRepository : IBoardsRepository
         {
             ThreadSortOrder.CreationDate => board.Threads.OrderByDescending(x => x.CreatedAt),
             ThreadSortOrder.ReplyCount => board.Threads.OrderByDescending(x => x.Replies.Count),
-            ThreadSortOrder.BumpOrder  => board.Threads.OrderByDescending(x => x.Replies.Last().CreatedAt),
+            ThreadSortOrder.Bump  => board.Threads.OrderByDescending(x => x.Replies.Last().CreatedAt),
         };
         
         var paginatedThreads = sortedThreads

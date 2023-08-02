@@ -2,7 +2,7 @@ namespace boards.Domain.Queries;
 
 public enum ThreadSortOrder
 {
-    BumpOrder,
+    Bump,
     CreationDate,
     ReplyCount
 }

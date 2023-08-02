@@ -8,7 +8,7 @@ public static class SortOrderMapper
     public static ThreadSortOrder ToDomain(this ThreadSortOrderDto dto) =>
         dto switch
         {
-            ThreadSortOrderDto.BumpOrder => ThreadSortOrder.BumpOrder,
+            ThreadSortOrderDto.Bump => ThreadSortOrder.Bump,
             ThreadSortOrderDto.CreationDate => ThreadSortOrder.CreationDate,
             ThreadSortOrderDto.ReplyCount => ThreadSortOrder.ReplyCount,
         };

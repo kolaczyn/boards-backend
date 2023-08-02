@@ -2,7 +2,7 @@ namespace boards.Application.Dto;
 
 public enum ThreadSortOrderDto
 {
-    BumpOrder,
+    Bump,
     CreationDate,
     ReplyCount
 }
