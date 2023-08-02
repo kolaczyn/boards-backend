@@ -54,11 +54,14 @@ public class BoardsRepository : IBoardsRepository
         {
             return (null, new BoardDoesNotExistError());
         }
-        
-        var sortedThreads = query.SortOrder == ThreadSortOrder.CreationDate
-            ? board.Threads.OrderByDescending(x => x.CreatedAt)
-            : board.Threads.OrderByDescending(x => x.Replies.Count);
 
+        var sortedThreads = query.SortOrder switch
+        {
+            ThreadSortOrder.CreationDate => board.Threads.OrderByDescending(x => x.CreatedAt),
+            ThreadSortOrder.ReplyCount => board.Threads.OrderByDescending(x => x.Replies.Count),
+            ThreadSortOrder.BumpOrder  => board.Threads.OrderByDescending(x => x.Replies.Last().CreatedAt),
+        };
+        
         var paginatedThreads = sortedThreads
             // not the most optimal solution - we should paginate in the sql, but this should work for now :p
             .Skip((query.Page - 1) * query.PageSize)

@@ -24,7 +24,7 @@ public class GetThreadsListUseCase
             Slug = boardSlug,
             Page = page,
             PageSize = pageSize,
-            SortOrder = sortOrder.toDomain()
+            SortOrder = sortOrder.ToDomain()
         };
         var (result, err) = await _boardRepository.GetThreads(query, cancellationToken);
 
