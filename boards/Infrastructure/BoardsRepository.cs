@@ -54,8 +54,12 @@ public class BoardsRepository : IBoardsRepository
         {
             return (null, new BoardDoesNotExistError());
         }
+        
+        var sortedThreads = query.SortOrder == ThreadSortOrder.CreationDate
+            ? board.Threads.OrderByDescending(x => x.CreatedAt)
+            : board.Threads.OrderByDescending(x => x.Replies.Count);
 
-        var threads = board.Threads
+        var paginatedThreads = sortedThreads
             // not the most optimal solution - we should paginate in the sql, but this should work for now :p
             .Skip((query.Page - 1) * query.PageSize)
             .Take(query.PageSize).Select(x => new ThreadTeaserDomain()
@@ -67,15 +71,12 @@ public class BoardsRepository : IBoardsRepository
             });
 
         // again - sorting should probably be done on the sql level, but whatever :D
-        var sortedThreads = query.SortOrder == ThreadSortOrder.CreationDate
-            ? threads.OrderByDescending(x => x.CreatedAt)
-            : threads.OrderByDescending(x => x.RepliesCount);
 
         var result = new BoardsThreadsDomain
         {
             Name = board.Name,
             Slug = board.Slug,
-            Threads = sortedThreads
+            Threads = paginatedThreads
         };
         
 
