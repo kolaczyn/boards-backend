@@ -4,6 +4,7 @@ using boards.Domain.Providers;
 using boards.Domain.Repositories;
 using boards.Infrastructure;
 using boards.Infrastructure.Providers;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +30,11 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
     builder.Services.AddTransient<ICheckPassword, CheckPassword>();
     
+    builder.Services.Configure<FormOptions>(options =>
+    {
+        options.MultipartBodyLengthLimit = 209715; // 200KB limit (200 * 1024 bytes)
+    });
+    
     builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("Secrets"));
 }
 
@@ -41,6 +47,7 @@ builder.Services.AddDbContext<BoardDbContext>(options =>
 var app = builder.Build();
 
 
+app.UseStaticFiles("wwwroot");
 app.Use(async (ctx, next) =>
 {
     ctx.Response.Headers["Access-Control-Allow-Origin"] = "*";
@@ -57,7 +64,7 @@ app.Use(async (ctx, next) =>
 });
 
 {
-    using var scope = ServiceProviderServiceExtensions.CreateScope(app.Services);
+    using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<BoardDbContext>();
     await dbContext.Database.MigrateAsync();
 }

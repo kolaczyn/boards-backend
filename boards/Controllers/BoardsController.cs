@@ -11,6 +11,13 @@ namespace boards.Controllers;
 [Route("boards")]
 public class BoardsController : ControllerBase
 {
+    private readonly IWebHostEnvironment _env;
+
+    public BoardsController(IWebHostEnvironment env)
+    {
+        _env = env;
+    }
+
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<BoardDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetBoards([FromServices] GetAllBoardsUseCase useCase,
@@ -39,7 +46,7 @@ public class BoardsController : ControllerBase
         return Created($"/boards/{response.Slug}", response);
     }
 
-    
+
     [HttpGet("{slug}")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(BoardsThreadsDto), StatusCodes.Status200OK)]
@@ -140,5 +147,70 @@ public class BoardsController : ControllerBase
         }
 
         return Ok(response);
+    }
+
+    [HttpPost("images")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> PostImage(IFormFile? file)
+    {
+        if (file == null || file.Length == 0)
+        {
+            return BadRequest("File not selected of empty");
+        }
+
+        var uploadsFolderPath = Path.Combine(_env.ContentRootPath, "uploads");
+        if (!Directory.Exists(uploadsFolderPath))
+        {
+            Directory.CreateDirectory(uploadsFolderPath);
+        }
+        
+        var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
+        var filePath = Path.Combine(uploadsFolderPath, fileName);
+        await using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.CopyToAsync(stream);
+        }
+
+        // TODO DO NOT return full path
+        return Created(filePath, null);
+    }
+
+    [HttpGet("images/{fileName}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetImage([FromRoute] string fileName)
+    {
+        var uploadsFolderPath = Path.Combine(_env.ContentRootPath, "uploads");
+        var filePath = Path.Combine(uploadsFolderPath, fileName);
+        if (!System.IO.File.Exists(filePath))
+        {
+            return NotFound();
+        }
+
+        var file = await System.IO.File.ReadAllBytesAsync(filePath);
+        var extension = Path.GetExtension(filePath);
+        return File(file, GetMimeType(extension));
+    }
+    private string GetMimeType(string fileExtension)
+    {
+        // Define known content types based on file extensions
+        var mimeTypes = new Dictionary<string, string>
+        {
+            { ".jpg", "image/jpeg" },
+            { ".jpeg", "image/jpeg" },
+            { ".png", "image/png" },
+            { ".gif", "image/gif" },
+            // Add other supported image formats here
+        };
+
+        // Try to get the content type based on the file extension
+        if (mimeTypes.TryGetValue(fileExtension, out var contentType))
+        {
+            return contentType;
+        }
+
+        // If the content type is unknown, return a default type (e.g., application/octet-stream)
+        return "application/octet-stream";
     }
 }
