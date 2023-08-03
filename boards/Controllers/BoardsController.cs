@@ -12,13 +12,15 @@ namespace boards.Controllers;
 public class BoardsController : ControllerBase
 {
     [HttpGet]
-    public async Task<IEnumerable<BoardDto>> GetBoards([FromServices] GetAllBoardsUseCase useCase,
-        CancellationToken cancellationToken)
-    {
-        return await useCase.Execute(cancellationToken);
-    }
+    [ProducesResponseType(typeof(IEnumerable<BoardDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetBoards([FromServices] GetAllBoardsUseCase useCase,
+        CancellationToken cancellationToken) =>
+        Ok(await useCase.Execute(cancellationToken));
 
     [HttpPost]
+    [ProducesResponseType(typeof(BoardDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateBoard([FromBody] CreateBoardDto dto,
         [FromServices] CreateBoardUseCase useCase, CancellationToken cancellationToken)
     {
@@ -34,10 +36,13 @@ public class BoardsController : ControllerBase
             };
         }
 
-        return Created($"/boards/{response.Slug}",response);
+        return Created($"/boards/{response.Slug}", response);
     }
 
+    
     [HttpGet("{slug}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(BoardsThreadsDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetThreads([FromRoute] string slug,
         [FromQuery] GetThreadsQueryDto query,
         [FromServices] GetThreadsListUseCase useCase, CancellationToken cancellationToken
@@ -60,13 +65,14 @@ public class BoardsController : ControllerBase
 
 
     [HttpPost("{slug}/threads")]
-    public async Task<IActionResult> CreateThread([FromRoute] string slug,
-        [FromBody] CreateThreadDto dto,
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ThreadDto), StatusCodes.Status201Created)]
+    public async Task<IActionResult> CreateThread([FromRoute] string slug, [FromBody] CreateThreadDto dto,
         [FromServices] CreateThreadUseCase useCase, CancellationToken cancellationToken)
     {
         var (response, err) = await useCase.Execute(slug, dto.Title, dto.Message, cancellationToken);
 
-        if (err is not null)
+        if (response is null)
         {
             return err switch
             {
@@ -76,10 +82,12 @@ public class BoardsController : ControllerBase
             };
         }
 
-        return Ok(response);
+        return Created($"/boards/{slug}/threads/{response.Id}", response);
     }
 
     [HttpGet("{slug}/threads/{threadId:int}")]
+    [ProducesResponseType(typeof(ThreadDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetThread([FromRoute] string slug, [FromRoute] int threadId,
         [FromServices] GetThreadUseCase useCase, CancellationToken cancellationToken)
     {
@@ -93,15 +101,26 @@ public class BoardsController : ControllerBase
     }
 
     [HttpPost("{slug}/threads/{threadId:int}/replies")]
-    public async Task<ReplyDto?> CreateReply([FromRoute] string slug,
+    [ProducesResponseType(typeof(ReplyDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> CreateReply([FromRoute] string slug,
         [FromRoute] int threadId,
         [FromBody] CreateReplyDto dto,
         [FromServices] CreateReplyUseCase useCase, CancellationToken cancellationToken)
     {
-        return await useCase.Execute(slug, threadId, dto.Message, cancellationToken);
+        var response = await useCase.Execute(slug, threadId, dto.Message, cancellationToken);
+
+        if (response is null)
+        {
+            return NotFound();
+        }
+
+        return Created($"/boards/{slug}/threads/{threadId}", response);
     }
 
     [HttpDelete("{slug}/threads/{threadId:int}/replies/{replyId:int}")]
+    [ProducesResponseType(typeof(ReplyDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> DeleteReply([FromRoute] string slug,
         [FromRoute] int threadId,
         [FromRoute] int replyId,
