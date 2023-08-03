@@ -15,7 +15,7 @@ public class CreateThreadUseCase
         _boardRepository = boardRepository;
     }
 
-    public async Task<(ThreadDto?, IAppError?)> Execute(string boardSlug, string message,
+    public async Task<(ThreadDto?, IAppError?)> Execute(string boardSlug, string?  title, string message,
         CancellationToken cancellationToken)
     {
         // TODO should this be injected?
@@ -30,7 +30,7 @@ public class CreateThreadUseCase
             return (null, new BoardDoesNotExistError());
         }
 
-        var result = (await _boardRepository.CreateThread(boardSlug, message, cancellationToken))?.ToDto();
+        var result = (await _boardRepository.CreateThread(boardSlug, title, message, cancellationToken))?.ToDto();
         return (result, null);
     }
 }

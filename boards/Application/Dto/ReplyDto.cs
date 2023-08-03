@@ -8,5 +8,5 @@ public class ReplyDto
     public required int Id { get; init; }
     [Required]
     public required string Message { get; init; }
-    public required DateTime? CreatedAt { get; init; }
+    public DateTime? CreatedAt { get; init; }
 }

@@ -9,7 +9,8 @@ public static class ThreadMapper
         new()
         {
             Replies = domain.Replies.Select(ReplyMapper.ToDto),
+            CreatedAt = domain.CreatedAt,
             Id = domain.Id,
-            CreatedAt = domain.CreatedAt
+            Title = domain.Title
         };
 }

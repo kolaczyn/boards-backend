@@ -65,12 +65,12 @@ public class BoardsRepository : IBoardsRepository
         var paginatedThreads = sortedThreads
             // not the most optimal solution - we should paginate in the sql, but this should work for now :p
             .Skip((query.Page - 1) * query.PageSize)
-            .Take(query.PageSize).Select(x => new ThreadTeaserDomain()
+            .Take(query.PageSize).Select(x => new ThreadTeaserDomain
             {
                 Id = x.Id,
-                Message = x.Replies.FirstOrDefault()?.Message ?? "",
+                Message = x.Title ?? x.Replies.FirstOrDefault()?.Message ?? "",
                 RepliesCount = x.Replies.Count,
-                CreatedAt = x.CreatedAt
+                CreatedAt = x.CreatedAt,
             });
 
         // again - sorting should probably be done on the sql level, but whatever :D
@@ -86,7 +86,7 @@ public class BoardsRepository : IBoardsRepository
         return (result, null);
     }
 
-    public async Task<ThreadDomain?> CreateThread(string slug, string message, CancellationToken cancellationToken)
+    public async Task<ThreadDomain?> CreateThread(string slug, string? title, string message, CancellationToken cancellationToken)
     {
         var board = await _dbContext.Boards.FindAsync(slug, cancellationToken);
         if (board == null)
@@ -98,8 +98,9 @@ public class BoardsRepository : IBoardsRepository
         var newThread = new ThreadDb
         {
             Board = board,
+            Title = title,
             Replies = new List<ReplyDb>(),
-            CreatedAt = now,
+            CreatedAt = now
         };
 
         _dbContext.Threads.Add(newThread);
@@ -109,7 +110,7 @@ public class BoardsRepository : IBoardsRepository
         {
             Message = message,
             Thread = newThread,
-            CreatedAt = now,
+            CreatedAt = now
         };
         _dbContext.Replies.Add(newReply);
         await _dbContext.SaveChangesAsync(cancellationToken);
@@ -120,7 +121,8 @@ public class BoardsRepository : IBoardsRepository
             Board = thread.Board.ToDomain(),
             Id = thread.Id,
             Replies = thread.Replies.Select(x => x.ToDomain()),
-            CreatedAt = now
+            CreatedAt = now,
+            Title = thread.Title
         };
     }
 
@@ -138,7 +140,7 @@ public class BoardsRepository : IBoardsRepository
         {
             Message = message,
             Thread = thread,
-            CreatedAt = now
+            CreatedAt = now,
         };
         _dbContext.Replies.Add(newReply);
         await _dbContext.SaveChangesAsync(cancellationToken);

@@ -2,9 +2,9 @@ using boards.Domain.Errors;
 
 namespace boards.Domain.Validation;
 
-public class ReplyValidation
+public static class ReplyValidation
 {
-    public static IAppError? ValidateReply(string reply)
+    public static IAppError? ValidateReply(string? reply)
     {
         if (string.IsNullOrWhiteSpace(reply))
         {

@@ -64,7 +64,7 @@ public class BoardsController : ControllerBase
         [FromBody] CreateThreadDto dto,
         [FromServices] CreateThreadUseCase useCase, CancellationToken cancellationToken)
     {
-        var (response, err) = await useCase.Execute(slug, dto.Message, cancellationToken);
+        var (response, err) = await useCase.Execute(slug, dto.Title, dto.Message, cancellationToken);
 
         if (err is not null)
         {
