@@ -6,4 +6,5 @@ public class ReplyDb
     public required string Message { get; set; }
     public required ThreadDb Thread { get; set; }
     public DateTime? CreatedAt { get; set; }
+    public string? ImageUrl { get; set; }
 }

@@ -71,6 +71,7 @@ public class BoardsRepository : IBoardsRepository
                 Message = x.Title ?? x.Replies.FirstOrDefault()?.Message ?? "",
                 RepliesCount = x.Replies.Count,
                 CreatedAt = x.CreatedAt,
+                ImageUrl = x.Replies.FirstOrDefault()?.ImageUrl
             });
 
         // again - sorting should probably be done on the sql level, but whatever :D
@@ -86,7 +87,7 @@ public class BoardsRepository : IBoardsRepository
         return (result, null);
     }
 
-    public async Task<ThreadDomain?> CreateThread(string slug, string? title, string message, CancellationToken cancellationToken)
+    public async Task<ThreadDomain?> CreateThread(string slug, string? title, string message, string? imageUrl, CancellationToken cancellationToken)
     {
         var board = await _dbContext.Boards.FindAsync(slug, cancellationToken);
         if (board == null)
@@ -110,7 +111,8 @@ public class BoardsRepository : IBoardsRepository
         {
             Message = message,
             Thread = newThread,
-            CreatedAt = now
+            CreatedAt = now,
+            ImageUrl = imageUrl
         };
         _dbContext.Replies.Add(newReply);
         await _dbContext.SaveChangesAsync(cancellationToken);
@@ -122,7 +124,7 @@ public class BoardsRepository : IBoardsRepository
             Id = thread.Id,
             Replies = thread.Replies.Select(x => x.ToDomain()),
             CreatedAt = now,
-            Title = thread.Title
+            Title = thread.Title,
         };
     }
 

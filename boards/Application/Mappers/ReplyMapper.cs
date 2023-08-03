@@ -10,6 +10,7 @@ public static class ReplyMapper
         {
             Message = domain.Message,
             CreatedAt = domain.CreatedAt,
-            Id = domain.Id
+            Id = domain.Id,
+            ImageUrl = domain.ImageUrl
         };
 }

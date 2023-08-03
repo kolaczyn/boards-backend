@@ -11,6 +11,6 @@ public static class ThreadMapper
             Replies = domain.Replies.Select(ReplyMapper.ToDto),
             CreatedAt = domain.CreatedAt,
             Id = domain.Id,
-            Title = domain.Title
+            Title = domain.Title,
         };
 }

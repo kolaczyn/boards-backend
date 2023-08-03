@@ -11,7 +11,8 @@ public static class ReplyMapper
         {
             Id = db.Id,
             Message = db.Message,
-            CreatedAt = db.CreatedAt
+            CreatedAt = db.CreatedAt,
+            ImageUrl = db.ImageUrl
         };
     }
 }

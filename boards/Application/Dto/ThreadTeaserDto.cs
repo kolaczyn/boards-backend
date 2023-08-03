@@ -10,5 +10,6 @@ public class ThreadTeaserDto
     public required string Message { get; init; }
     [Required]
     public required int RepliesCount { get; init; }
+    public string? ImageUrl { get; init; }
     public required DateTime? CreatedAt { get; init; }
 }
