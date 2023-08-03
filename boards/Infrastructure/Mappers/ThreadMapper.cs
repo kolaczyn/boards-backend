@@ -12,6 +12,6 @@ public static class ThreadMapper
             Board = db.Board.ToDomain(),
             Id = db.Id,
             CreatedAt = db.CreatedAt,
-            Title = db.Title ?? db.Replies.First().Message
+            Title = db.Title
         };
 }
