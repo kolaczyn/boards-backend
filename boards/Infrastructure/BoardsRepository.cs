@@ -22,7 +22,7 @@ public class BoardsRepository : IBoardsRepository
 
     public async Task<IEnumerable<BoardDomain>> GetAll(CancellationToken cancellationToken)
     {
-        var threads = await _dbContext.Boards
+        var threads = await _dbContext.Boards.AsNoTracking()
             .ToListAsync(cancellationToken);
 
         return threads.Select(x => x.ToDomain());
@@ -45,6 +45,7 @@ public class BoardsRepository : IBoardsRepository
         CancellationToken cancellationToken)
     {
         var board = await _dbContext.Boards
+            .AsNoTracking()
             .Include(x => x.Threads)
             .ThenInclude(t => t.Replies)
             .Where(x => x.Slug == query.Slug)
@@ -153,7 +154,7 @@ public class BoardsRepository : IBoardsRepository
 
     public async Task<ReplyDomain?> GetReply(string slug, int threadId, int replyId, CancellationToken cancellationToken)
     {
-        var reply = await _dbContext.Replies
+        var reply = await _dbContext.Replies.AsNoTracking()
             .Include(x => x.Thread)
             .ThenInclude(x => x.Board)
             .FirstOrDefaultAsync(x => x.Id == replyId && x.Thread.Id == threadId && x.Thread.Board.Slug == slug,
@@ -183,10 +184,12 @@ public class BoardsRepository : IBoardsRepository
 
     public async Task<ThreadDomain?> GetThread(string slug, int threadId, CancellationToken cancellationToken)
     {
-        var thread = await _dbContext.Threads.Where(x => x.Board.Slug == slug)
+        var thread = await _dbContext.Threads.AsNoTracking()
+            .Where(x => x.Board.Slug == slug)
             .Include(x => x.Replies)
             .Include(x => x.Board)
-            .FirstOrDefaultAsync(x => x.Id == threadId, cancellationToken);
+            .FirstOrDefaultAsync(x => x.Id == threadId,
+                cancellationToken);
 
         return thread?.ToDomain();
     }
