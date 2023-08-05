@@ -5,4 +5,5 @@
       context: .
       dockerfile: boards/Dockerfile
     ports:
-      - 8000:80
+      - 8000:8000
+    network_mode: host
