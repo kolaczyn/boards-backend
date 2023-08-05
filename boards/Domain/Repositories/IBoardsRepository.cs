@@ -15,7 +15,8 @@ public interface IBoardsRepository
     public Task<ThreadDomain?> CreateThread(string slug, string? title, string message, string? imageUrl, CancellationToken cancellationToken);
     public Task<ThreadDomain?> GetThread(string slug, int threadId, CancellationToken cancellationToken);
     
-    public Task<ReplyDomain?> CreateReply(string slug, int threadId, string message,
+    public Task<(ReplyDomain?, IAppError?)> CreateReply(int threadId, string message,
+        string? imageUrl,
         CancellationToken cancellationToken);
     public Task<ReplyDomain?> GetReply(string slug, int threadId, int replyId, CancellationToken cancellationToken);
     public Task<ReplyDomain?> DeleteReply(string slug, int threadId, int replyId, CancellationToken cancellationToken);

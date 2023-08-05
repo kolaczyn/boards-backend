@@ -130,13 +130,14 @@ public class BoardsRepository : IBoardsRepository
         };
     }
 
-    public async Task<ReplyDomain?> CreateReply(string slug, int threadId, string message,
+    public async Task<(ReplyDomain?, IAppError?)> CreateReply(int threadId, string message,
+        string? imageUrl,
         CancellationToken cancellationToken)
     {
         var thread = await _dbContext.Threads.FindAsync(threadId, cancellationToken);
-        if (thread == null)
+        if (thread is null)
         {
-            return null;
+            return (null, new ThreadDoesNotExist());
         }
 
         var now = _dateTimeProvider.Now();
@@ -145,12 +146,19 @@ public class BoardsRepository : IBoardsRepository
             Message = message,
             Thread = thread,
             CreatedAt = now,
+            ImageUrl = imageUrl
         };
         _dbContext.Replies.Add(newReply);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         var reply = await _dbContext.Replies.FindAsync(newReply.Id, cancellationToken);
-        return reply?.ToDomain();
+
+        if (reply is null)
+        {
+            return (null, new SomethingWentWrongErr());
+        }
+        
+        return (reply.ToDomain(), null);
     }
 
     public async Task<ReplyDomain?> GetReply(string slug, int threadId, int replyId, CancellationToken cancellationToken)

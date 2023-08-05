@@ -1,5 +1,7 @@
 using boards.Application.Dto;
+using boards.Domain.Errors;
 using boards.Domain.Repositories;
+using boards.Domain.Validation;
 
 namespace boards.Application.UseCases;
 
@@ -12,19 +14,27 @@ public class CreateReplyUseCase
         _boardsRepository = boardsRepository;
     }
 
-    public async Task<ReplyDto?> Execute(string slug, int threadId, string message, CancellationToken cancellationToken)
+    public async Task<(ReplyDto?, IAppError?)> Execute(int threadId, string message, string? imageUrl, CancellationToken cancellationToken)
     {
-        var reply = await _boardsRepository.CreateReply(slug, threadId, message, cancellationToken);
-        if (reply == null)
+        var validationErr = UrlValidation.Validate(imageUrl);
+        if (validationErr is not null)
         {
-            return null;
+            return (null, validationErr);
+        }
+        var (reply, err) = await _boardsRepository.CreateReply(threadId, message, imageUrl, cancellationToken);
+        if (reply is null)
+        {
+            return (null, err);
         }
 
-        return new ReplyDto
+        var result =  new ReplyDto
         {
             Id = reply.Id,
             Message = reply.Message,
-            CreatedAt = reply.CreatedAt
+            CreatedAt = reply.CreatedAt,
+            ImageUrl = reply.ImageUrl
         };
+
+        return (result, null);
     }
 }

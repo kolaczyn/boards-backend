@@ -6,4 +6,5 @@ public class CreateReplyDto
 {
     [Required]
     public required string Message { get; init; }
+    public string? ImageUrl { get; init; }
 }

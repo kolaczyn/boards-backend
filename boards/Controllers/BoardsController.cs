@@ -103,17 +103,23 @@ public class BoardsController : ControllerBase
 
     [HttpPost("{slug}/threads/{threadId:int}/replies")]
     [ProducesResponseType(typeof(ReplyDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(AppError),StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(AppError),StatusCodes.Status404NotFound)]
     public async Task<IActionResult> CreateReply([FromRoute] string slug,
         [FromRoute] int threadId,
         [FromBody] CreateReplyDto dto,
         [FromServices] CreateReplyUseCase useCase, CancellationToken cancellationToken)
     {
-        var response = await useCase.Execute(slug, threadId, dto.Message, cancellationToken);
+        var (response, err) = await useCase.Execute(threadId, dto.Message, dto.ImageUrl, cancellationToken);
 
         if (response is null)
         {
-            return NotFound();
+            return err switch
+            {
+                ThreadDoesNotExist => NotFound(err),
+                FieldIsNotUrl => BadRequest(err),
+                _ => StatusCode((int)HttpStatusCode.InternalServerError)
+            };
         }
 
         return Created($"/boards/{slug}/threads/{threadId}", response);
