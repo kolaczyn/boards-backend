@@ -11,6 +11,10 @@ namespace boards.Controllers;
 [Route("boards")]
 public class BoardsController : ControllerBase
 {
+    [HttpGet("ping")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public IActionResult Ping() => Ok("Pong");
+    
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<BoardDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetBoards([FromServices] GetAllBoardsUseCase useCase,
