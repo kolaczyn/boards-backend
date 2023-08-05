@@ -110,7 +110,9 @@ public class BoardsController : ControllerBase
         [FromBody] CreateReplyDto dto,
         [FromServices] CreateReplyUseCase useCase, CancellationToken cancellationToken)
     {
+        Console.WriteLine("->CreateReplyDto " + dto.ImageUrl);
         var (response, err) = await useCase.Execute(threadId, dto.Message, dto.ImageUrl, cancellationToken);
+        Console.WriteLine("->response: " + response.ImageUrl);
 
         if (response is null)
         {

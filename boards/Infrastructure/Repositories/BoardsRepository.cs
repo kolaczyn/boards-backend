@@ -152,6 +152,7 @@ public class BoardsRepository : IBoardsRepository
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         var reply = await _dbContext.Replies.FindAsync(newReply.Id, cancellationToken);
+        Console.WriteLine("-> reply from db: " + reply?.ImageUrl);
 
         if (reply is null)
         {
