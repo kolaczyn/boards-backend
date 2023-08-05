@@ -19,8 +19,8 @@ public class BoardsController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(typeof(BoardDto), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> CreateBoard([FromBody] CreateBoardDto dto,
         [FromServices] CreateBoardUseCase useCase, CancellationToken cancellationToken)
     {
@@ -30,8 +30,8 @@ public class BoardsController : ControllerBase
         {
             return err switch
             {
-                BoardAlreadyExists => BadRequest(err.Message),
-                WrongPasswordErr => Unauthorized(err.Message),
+                BoardAlreadyExists => BadRequest(err),
+                WrongPasswordErr => Unauthorized(err),
                 _ => StatusCode((int)HttpStatusCode.InternalServerError)
             };
         }
@@ -41,8 +41,8 @@ public class BoardsController : ControllerBase
 
     
     [HttpGet("{slug}")]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(BoardsThreadsDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(AppError), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetThreads([FromRoute] string slug,
         [FromQuery] GetThreadsQueryDto query,
         [FromServices] GetThreadsListUseCase useCase, CancellationToken cancellationToken
@@ -55,7 +55,7 @@ public class BoardsController : ControllerBase
         {
             return err switch
             {
-                BoardDoesNotExistError => NotFound(err.Message),
+                BoardDoesNotExistError => NotFound(err),
                 _ => StatusCode((int)HttpStatusCode.InternalServerError)
             };
         }
@@ -65,8 +65,8 @@ public class BoardsController : ControllerBase
 
 
     [HttpPost("{slug}/threads")]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ThreadDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(AppError), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> CreateThread([FromRoute] string slug, [FromBody] CreateThreadDto dto,
         [FromServices] CreateThreadUseCase useCase, CancellationToken cancellationToken)
     {
@@ -76,9 +76,9 @@ public class BoardsController : ControllerBase
         {
             return err switch
             {
-                BoardDoesNotExistError => NotFound(err.Message),
-                ReplyTooShort => BadRequest(err.Message),
-                FieldIsNotUrl => BadRequest(err.Message),
+                BoardDoesNotExistError => NotFound(err),
+                ReplyTooShort => BadRequest(err),
+                FieldIsNotUrl => BadRequest(err),
                 _ => StatusCode((int)HttpStatusCode.InternalServerError)
             };
         }
@@ -88,14 +88,14 @@ public class BoardsController : ControllerBase
 
     [HttpGet("{slug}/threads/{threadId:int}")]
     [ProducesResponseType(typeof(ThreadDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(AppError),StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetThread([FromRoute] string slug, [FromRoute] int threadId,
         [FromServices] GetThreadUseCase useCase, CancellationToken cancellationToken)
     {
         var response = await useCase.Execute(slug, threadId, cancellationToken);
         if (response is null)
         {
-            return Ok();
+            return NotFound();
         }
 
         return Ok(response);
@@ -103,7 +103,7 @@ public class BoardsController : ControllerBase
 
     [HttpPost("{slug}/threads/{threadId:int}/replies")]
     [ProducesResponseType(typeof(ReplyDto), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(AppError),StatusCodes.Status404NotFound)]
     public async Task<IActionResult> CreateReply([FromRoute] string slug,
         [FromRoute] int threadId,
         [FromBody] CreateReplyDto dto,
@@ -121,7 +121,7 @@ public class BoardsController : ControllerBase
 
     [HttpDelete("{slug}/threads/{threadId:int}/replies/{replyId:int}")]
     [ProducesResponseType(typeof(ReplyDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(AppError), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> DeleteReply([FromRoute] string slug,
         [FromRoute] int threadId,
         [FromRoute] int replyId,
@@ -134,8 +134,8 @@ public class BoardsController : ControllerBase
         {
             return err switch
             {
-                ReplyDoesNotExist => NotFound(err.Message),
-                WrongPasswordErr => Unauthorized(err.Message),
+                ReplyDoesNotExist => NotFound(err),
+                WrongPasswordErr => Unauthorized(err),
                 _ => StatusCode((int)HttpStatusCode.InternalServerError)
             };
         }

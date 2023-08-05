@@ -1,7 +1,7 @@
 using boards.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace boards.Infrastructure;
+namespace boards.Infrastructure.Context;
 
 public class BoardDbContext : DbContext
 {

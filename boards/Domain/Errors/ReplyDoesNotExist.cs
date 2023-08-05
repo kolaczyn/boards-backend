@@ -2,9 +2,6 @@ namespace boards.Domain.Errors;
 
 public class ReplyDoesNotExist : IAppError
 {
-    public string Message { get; set; }
-    public ReplyDoesNotExist()
-    {
-        Message = "Reply does not exist";
-    }
+    public int Id { get; init; } = 1004;
+    public string Message { get; init; } = "Reply does not exist";
 }

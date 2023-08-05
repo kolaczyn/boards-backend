@@ -2,5 +2,6 @@ namespace boards.Domain.Errors;
 
 public interface IAppError
 {
-    public string Message { get; set; }
+    public int Id { get; init; }
+    public string Message { get; init; }
 }

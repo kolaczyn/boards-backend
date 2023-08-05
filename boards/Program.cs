@@ -3,7 +3,9 @@ using boards.Application.UseCases;
 using boards.Domain.Providers;
 using boards.Domain.Repositories;
 using boards.Infrastructure;
+using boards.Infrastructure.Context;
 using boards.Infrastructure.Providers;
+using boards.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,9 +39,7 @@ builder.Services.AddDbContext<BoardDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"));
 });
 
-
 var app = builder.Build();
-
 
 app.Use(async (ctx, next) =>
 {

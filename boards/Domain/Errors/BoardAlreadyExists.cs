@@ -2,9 +2,6 @@ namespace boards.Domain.Errors;
 
 public class BoardAlreadyExists : IAppError
 {
-    public string Message { get; set; }
-    public BoardAlreadyExists()
-    {
-        Message = "Board already exists";
-    }
+    public int Id { get; init; } = 1001;
+    public string Message { get; init; } = "Board already exists";
 }

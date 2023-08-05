@@ -2,7 +2,7 @@ using boards.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace boards.Infrastructure;
+namespace boards.Infrastructure.Context;
 
 public sealed class BoardDbContextConfiguration : IEntityTypeConfiguration<BoardDb>
 {

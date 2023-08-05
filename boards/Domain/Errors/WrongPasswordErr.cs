@@ -2,9 +2,6 @@ namespace boards.Domain.Errors;
 
 public class WrongPasswordErr : IAppError
 {
-    public string Message { get; set; }
-    public WrongPasswordErr()
-    {
-        Message = "Wrong password";
-    }
+    public int Id { get; init; } = 1007;
+    public string Message { get; init; } = "Wrong password";
 }

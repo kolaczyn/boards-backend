@@ -2,10 +2,7 @@ namespace boards.Domain.Errors;
 
 public class BoardDoesNotExistError : IAppError
 {
-    public string Message { get; set; }
-    public BoardDoesNotExistError()
-    {
-        Message = "Board does not exist";
-    }
+    public int Id { get; init; } = 1002;
+    public string Message { get; init; } = "Board does not exist";
 
 }

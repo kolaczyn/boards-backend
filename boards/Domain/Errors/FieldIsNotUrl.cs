@@ -1,11 +1,7 @@
 namespace boards.Domain.Errors;
 
-public class FieldIsNotUrl :IAppError
+public class FieldIsNotUrl : IAppError
 {
-    public string Message { get; set; }
-
-    public FieldIsNotUrl()
-    {
-        Message = "The field is not a url";
-    }
+    public int Id { get; init; } = 1003;
+    public string Message { get; init; } = "The field is not a url";
 }

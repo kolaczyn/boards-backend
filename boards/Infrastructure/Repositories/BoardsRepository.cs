@@ -3,11 +3,12 @@ using boards.Domain.Models;
 using boards.Domain.Providers;
 using boards.Domain.Queries;
 using boards.Domain.Repositories;
+using boards.Infrastructure.Context;
 using boards.Infrastructure.Mappers;
 using boards.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace boards.Infrastructure;
+namespace boards.Infrastructure.Repositories;
 
 public class BoardsRepository : IBoardsRepository
 {
