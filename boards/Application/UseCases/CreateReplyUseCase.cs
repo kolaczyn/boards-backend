@@ -17,7 +17,9 @@ public class CreateReplyUseCase
     public async Task<(ReplyDto?, IAppError?)> Execute(int threadId, string message, string? imageUrl, CancellationToken cancellationToken)
     {
         var validationErr = UrlValidation.Validate(imageUrl);
-        if (validationErr is not null)
+        
+        // we allow null images
+        if (validationErr is not null && imageUrl is not null)
         {
             return (null, validationErr);
         }
