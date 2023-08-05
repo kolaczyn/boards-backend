@@ -11,6 +11,13 @@ namespace boards.Controllers;
 [Route("boards")]
 public class BoardsController : ControllerBase
 {
+    private readonly ILogger<BoardsController> _logger;
+
+    public BoardsController(ILogger<BoardsController> logger)
+    {
+        _logger = logger;
+    }
+
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<BoardDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetBoards([FromServices] GetAllBoardsUseCase useCase,
@@ -110,9 +117,9 @@ public class BoardsController : ControllerBase
         [FromBody] CreateReplyDto dto,
         [FromServices] CreateReplyUseCase useCase, CancellationToken cancellationToken)
     {
-        Console.WriteLine("->CreateReplyDto " + dto.ImageUrl);
+        _logger.LogInformation("->CreateReplyDto " + dto.ImageUrl);
         var (response, err) = await useCase.Execute(threadId, dto.Message, dto.ImageUrl, cancellationToken);
-        Console.WriteLine("->response: " + response.ImageUrl);
+        _logger.LogInformation("->response: " + response.ImageUrl);
 
         if (response is null)
         {

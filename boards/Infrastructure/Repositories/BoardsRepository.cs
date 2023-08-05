@@ -14,11 +14,13 @@ public class BoardsRepository : IBoardsRepository
 {
     private readonly BoardDbContext _dbContext;
     private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly ILogger<BoardsRepository> _logger;
 
-    public BoardsRepository(BoardDbContext dbContext, IDateTimeProvider dateTimeProvider)
+    public BoardsRepository(BoardDbContext dbContext, IDateTimeProvider dateTimeProvider, ILogger<BoardsRepository> logger)
     {
         _dbContext = dbContext;
         _dateTimeProvider = dateTimeProvider;
+        _logger = logger;
     }
 
     public async Task<IEnumerable<BoardDomain>> GetAll(CancellationToken cancellationToken)
@@ -152,7 +154,7 @@ public class BoardsRepository : IBoardsRepository
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         var reply = await _dbContext.Replies.FindAsync(newReply.Id, cancellationToken);
-        Console.WriteLine("-> reply from db: " + reply?.ImageUrl);
+        _logger.LogInformation("-> reply from db: " + reply?.ImageUrl);
 
         if (reply is null)
         {
