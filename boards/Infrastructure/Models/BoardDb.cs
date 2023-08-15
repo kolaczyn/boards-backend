@@ -5,4 +5,5 @@ public class BoardDb
     public string Slug { get; set; }
     public string Name { get; set; }
     public List<ThreadDb> Threads { get; set; }
+    public CategoryDb? Category { get; set; }
 }
