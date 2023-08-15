@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+env:
+  TOKEN: '${{ secrets.TOKEN }}'
+  ID: '${{ secrets.ID }}'
+
 jobs:
   ci:
     name: Continuous Integration
@@ -43,6 +47,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          repository: kolaczyn/boards-discord
       - uses: actions/setup-node@v1
         with:
           node-version: 18
