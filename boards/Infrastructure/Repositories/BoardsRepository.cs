@@ -15,7 +15,7 @@ public class BoardsRepository : IBoardsRepository
     private readonly BoardDbContext _dbContext;
     private readonly IDateTimeProvider _dateTimeProvider;
 
-    public BoardsRepository(BoardDbContext dbContext, IDateTimeProvider dateTimeProvider, ILogger<BoardsRepository> logger)
+    public BoardsRepository(BoardDbContext dbContext, IDateTimeProvider dateTimeProvider)
     {
         _dbContext = dbContext;
         _dateTimeProvider = dateTimeProvider;
@@ -28,6 +28,16 @@ public class BoardsRepository : IBoardsRepository
 
         return threads.Select(x => x.ToDomain());
     }
+    
+    public async Task<IEnumerable<CategoriesBoardsDomain>> GetCategoriesBoards(CancellationToken cancellationToken)
+    {
+        var categories = await _dbContext.Categories
+            .AsNoTracking()
+            .Include(x => x.Boards)
+            .ToListAsync(cancellationToken);
+        
+        return categories.Select(x => x.ToDomain());
+    }   
 
     public async Task<BoardDomain?> GetBySlug(string slug, CancellationToken cancellationToken)
     {

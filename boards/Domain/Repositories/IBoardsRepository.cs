@@ -9,6 +9,7 @@ public interface IBoardsRepository
     public Task<BoardDomain?> Create(BoardDomain board, CancellationToken cancellationToken);
     public Task<BoardDomain?> GetBySlug(string slug, CancellationToken cancellationToken);
     public Task<IEnumerable<BoardDomain>> GetAll(CancellationToken cancellationToken);
+    public Task<IEnumerable<CategoriesBoardsDomain>> GetCategoriesBoards(CancellationToken cancellationToken);
 
     public Task<(BoardsThreadsDomain?, IAppError?)> GetThreads(BoardThreadsQuery query, CancellationToken cancellationToken);
 

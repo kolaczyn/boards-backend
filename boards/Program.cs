@@ -2,7 +2,6 @@ using System.Text.Json.Serialization;
 using boards.Application.UseCases;
 using boards.Domain.Providers;
 using boards.Domain.Repositories;
-using boards.Infrastructure;
 using boards.Infrastructure.Context;
 using boards.Infrastructure.Providers;
 using boards.Infrastructure.Repositories;
@@ -19,7 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddSwaggerGen();
 
     builder.Services.AddTransient<GetAllBoardsUseCase>();
-    builder.Services.AddTransient<GetAllBoardsUseCase>();
+    builder.Services.AddTransient<GetAllBoardsV2UseCase>();
     builder.Services.AddTransient<CreateBoardUseCase>();
     builder.Services.AddTransient<GetThreadsListUseCase>();
     builder.Services.AddTransient<CreateThreadUseCase>();
