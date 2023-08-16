@@ -8,4 +8,5 @@ public class ReplyDto
     [Required] public required string Message { get; init; }
     public string? ImageUrl { get; init; }
     public DateTime? CreatedAt { get; init; }
+    public string? Tripcode { get; init; }
 }

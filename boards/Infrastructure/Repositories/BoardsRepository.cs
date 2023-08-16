@@ -99,7 +99,7 @@ public class BoardsRepository : IBoardsRepository
         return (result, null);
     }
 
-    public async Task<ThreadDomain?> CreateThread(string slug, string? title, string message, string? imageUrl, CancellationToken cancellationToken)
+    public async Task<ThreadDomain?> CreateThread(string slug, string? title, string message, string? imageUrl, string? tripcode, CancellationToken cancellationToken)
     {
         var board = await _dbContext.Boards.FindAsync(slug, cancellationToken);
         if (board == null)
@@ -124,7 +124,8 @@ public class BoardsRepository : IBoardsRepository
             Message = message,
             Thread = newThread,
             CreatedAt = now,
-            ImageUrl = imageUrl
+            ImageUrl = imageUrl,
+            Tripcode = tripcode
         };
         _dbContext.Replies.Add(newReply);
         await _dbContext.SaveChangesAsync(cancellationToken);
@@ -141,7 +142,7 @@ public class BoardsRepository : IBoardsRepository
     }
 
     public async Task<(ReplyDomain?, IAppError?)> CreateReply(int threadId, string message,
-        string? imageUrl,
+        string? imageUrl, string? tripcode,
         CancellationToken cancellationToken)
     {
         var thread = await _dbContext.Threads.FindAsync(threadId, cancellationToken);
@@ -156,7 +157,8 @@ public class BoardsRepository : IBoardsRepository
             Message = message,
             Thread = thread,
             CreatedAt = now,
-            ImageUrl = imageUrl
+            ImageUrl = imageUrl,
+            Tripcode = tripcode
         };
         _dbContext.Replies.Add(newReply);
         await _dbContext.SaveChangesAsync(cancellationToken);

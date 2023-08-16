@@ -11,6 +11,7 @@ public static class ReplyMapper
             Message = domain.Message,
             CreatedAt = domain.CreatedAt,
             Id = domain.Id,
-            ImageUrl = domain.ImageUrl
+            ImageUrl = domain.ImageUrl,
+            Tripcode = domain.Tripcode
         };
 }

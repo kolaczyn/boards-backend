@@ -6,4 +6,5 @@ public class ReplyDomain
     public required string Message { get; init; }
     public DateTime? CreatedAt { get; init; }
     public string? ImageUrl { get; init; }
+    public string? Tripcode { get; init; }
 }

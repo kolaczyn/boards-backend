@@ -7,4 +7,5 @@ public class ReplyDb
     public required ThreadDb Thread { get; set; }
     public DateTime? CreatedAt { get; set; }
     public string? ImageUrl { get; set; }
+    public string? Tripcode { get; set; }
 }

@@ -74,7 +74,7 @@ public class BoardsController : ControllerBase
     public async Task<IActionResult> CreateThread([FromRoute] string slug, [FromBody] CreateThreadDto dto,
         [FromServices] CreateThreadUseCase useCase, CancellationToken cancellationToken)
     {
-        var (response, err) = await useCase.Execute(slug, dto.Title, dto.Message, dto.ImageUrl, cancellationToken);
+        var (response, err) = await useCase.Execute(slug, dto, cancellationToken);
 
         if (response is null)
         {
@@ -83,6 +83,7 @@ public class BoardsController : ControllerBase
                 BoardDoesNotExistError => NotFound(err),
                 ReplyTooShort => BadRequest(err),
                 FieldIsNotUrl => BadRequest(err),
+                InvalidTripcode => BadRequest(err),
                 _ => StatusCode((int)HttpStatusCode.InternalServerError)
             };
         }
@@ -114,7 +115,7 @@ public class BoardsController : ControllerBase
         [FromBody] CreateReplyDto dto,
         [FromServices] CreateReplyUseCase useCase, CancellationToken cancellationToken)
     {
-        var (response, err) = await useCase.Execute(threadId, dto.Message, dto.ImageUrl, cancellationToken);
+        var (response, err) = await useCase.Execute(threadId, dto, cancellationToken);
 
         if (response is null)
         {

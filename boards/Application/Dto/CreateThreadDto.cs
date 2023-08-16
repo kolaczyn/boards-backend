@@ -8,4 +8,5 @@ public class CreateThreadDto
     [Required]
     public required string Message { get; init; }
     public string? ImageUrl { get; init; }
+    public string? Tripcode { get; init; }
 }

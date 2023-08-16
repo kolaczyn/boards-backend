@@ -29,6 +29,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddTransient<IBoardsRepository, BoardsRepository>();
     builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
     builder.Services.AddTransient<ICheckPassword, CheckPassword>();
+    builder.Services.AddTransient<ITripcodeEncoder, TripcodeEncoder>();
     
     builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("Secrets"));
 }
