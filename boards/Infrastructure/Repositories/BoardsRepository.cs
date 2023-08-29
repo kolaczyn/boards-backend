@@ -184,15 +184,28 @@ public class BoardsRepository : IBoardsRepository
         return reply?.ToDomain();
     }
 
-    public async Task<ThreadDomain?> GetThread(string slug, int threadId, CancellationToken cancellationToken)
-    {
-        var thread = await _dbContext.Threads.AsNoTracking()
-            .Where(x => x.Board.Slug == slug)
-            .Include(x => x.Replies)
-            .Include(x => x.Board)
-            .FirstOrDefaultAsync(x => x.Id == threadId,
-                cancellationToken);
+public async Task<ThreadDomain?> GetThread(string slug, int threadId, CancellationToken cancellationToken)
+{
+    var thread = await _dbContext.Threads.AsNoTracking()
+        .Where(x => x.Board.Slug == slug)
+        .Include(x => x.Replies)
+        .Include(x => x.Board)
+        .FirstOrDefaultAsync(x => x.Id == threadId, cancellationToken);
 
-        return thread?.ToDomain();
+    if (thread is null)
+    {
+        return null;
     }
+
+    var sortedReplies = thread.Replies.OrderBy(x => x.CreatedAt);
+
+    var output = new ThreadDomain
+    {
+        Board = thread.Board.ToDomain(),
+        Id = thread.Id,
+        Replies = sortedReplies.Select(x => x.ToDomain())
+    };
+
+    return output;
+}
 }
