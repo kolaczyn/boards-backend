@@ -129,28 +129,4 @@ public class BoardsController : ControllerBase
 
         return Created($"/boards/{slug}/threads/{threadId}", response);
     }
-
-    [HttpDelete("{slug}/threads/{threadId:int}/replies/{replyId:int}")]
-    [ProducesResponseType(typeof(ReplyDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(AppError), StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> DeleteReply([FromRoute] string slug,
-        [FromRoute] int threadId,
-        [FromRoute] int replyId,
-        [FromBody] PasswordProtectionDto dto,
-        [FromServices] DeleteReplyUseCase useCase, CancellationToken cancellationToken)
-    {
-        var (response, err) = await useCase.Execute(slug, threadId, replyId, dto.Password, cancellationToken);
-
-        if (response is null)
-        {
-            return err switch
-            {
-                ReplyDoesNotExist => NotFound(err),
-                WrongPasswordErr => Unauthorized(err),
-                _ => StatusCode((int)HttpStatusCode.InternalServerError)
-            };
-        }
-
-        return Ok(response);
-    }
 }

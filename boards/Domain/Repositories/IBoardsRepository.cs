@@ -19,5 +19,4 @@ public interface IBoardsRepository
     public Task<(ReplyDomain?, IAppError?)> CreateReply(int threadId, string message,
         string? imageUrl, string? tripcode, CancellationToken cancellationToken);
     public Task<ReplyDomain?> GetReply(string slug, int threadId, int replyId, CancellationToken cancellationToken);
-    public Task<ReplyDomain?> DeleteReply(string slug, int threadId, int replyId, CancellationToken cancellationToken);
 }

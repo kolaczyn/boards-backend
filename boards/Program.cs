@@ -24,7 +24,6 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddTransient<CreateThreadUseCase>();
     builder.Services.AddTransient<CreateReplyUseCase>();
     builder.Services.AddTransient<GetThreadUseCase>();
-    builder.Services.AddTransient<DeleteReplyUseCase>();
 
     builder.Services.AddTransient<IBoardsRepository, BoardsRepository>();
     builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
